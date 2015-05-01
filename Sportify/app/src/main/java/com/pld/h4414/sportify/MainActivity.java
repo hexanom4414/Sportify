@@ -87,7 +87,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             // listener for when this tab is selected.
             actionBar.addTab(
                     actionBar.newTab()
-                            .setText(mAppSectionsPagerAdapter.getPageTitle(i))
+                            .setIcon(mAppSectionsPagerAdapter.getPageIcon(i))
                             .setTabListener(this));
         }
 
@@ -128,7 +128,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public Fragment getItem(int i) {
             switch (i) {
-                case 0:
+                case 1:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
                     return new LaunchpadSectionFragment();
@@ -145,13 +145,37 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             return "Section " + (position + 1);
         }
+
+        public int getPageIcon (int position) {
+            switch (position) {
+                case 0:
+                    return R.drawable.ic_find;
+                case 1:
+                    return R.drawable.ic_add;
+
+                case 2:
+
+                    return R.drawable.ic_friends;
+
+                case 3:
+
+                    return R.drawable.ic_user;
+
+                default:
+
+                    return R.drawable.ic_sportify;
+
+            }
+
+        }
+
     }
 
     /**
@@ -163,7 +187,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
-
+/*
             // Demonstration of a collection-browsing activity.
             rootView.findViewById(R.id.demo_collection_button)
                     .setOnClickListener(new View.OnClickListener() {
@@ -189,7 +213,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                                     Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
                             startActivity(externalActivityIntent);
                         }
-                    });
+                    });*/
 
 
             return rootView;

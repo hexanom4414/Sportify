@@ -3,7 +3,6 @@
     android:layout_height="match_parent" tools:context=".MainActivity">
 
 
-
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -54,5 +53,15 @@
         android:id="@+id/sign_in_button"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ignorer >>"
+        android:id="@+id/button"
+        android:onClick="ignoreAction"
+        android:layout_alignBottom="@+id/personName_text"
+        android:layout_toRightOf="@+id/personPhoto_image"
+        android:layout_toEndOf="@+id/personPhoto_image" />
 
 </RelativeLayout>

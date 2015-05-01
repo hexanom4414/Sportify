@@ -183,6 +183,14 @@ public class ConnectionActivity extends Activity implements
             }
         }
     }
+    /** Called when the user clicks the Ignore button */
+    public void ignoreAction(View view) {
+
+        //transition to another activity here
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+    }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView bmImage;
