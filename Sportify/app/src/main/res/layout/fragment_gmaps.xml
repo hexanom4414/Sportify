@@ -1,14 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
-
-    <fragment
-        android:id="@+id/map"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.pld.h4414.sportify.MainActivity"
-        class="com.google.android.gms.maps.SupportMapFragment" />
-
-</RelativeLayout>
+<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:id="@+id/map"
+    tools:context="com.pld.h4414.sportify.MainActivity.GmapsFragment"
+    android:name="com.google.android.gms.maps.MapFragment" />
