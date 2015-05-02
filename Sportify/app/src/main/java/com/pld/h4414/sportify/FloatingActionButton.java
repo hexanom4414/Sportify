@@ -68,6 +68,10 @@ public class FloatingActionButton extends View {
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     if (event.getAction() == MotionEvent.ACTION_UP) {
+
+        //here action
+
+
       setAlpha(1.0f);
     } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
       setAlpha(0.6f);
