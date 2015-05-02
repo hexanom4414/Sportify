@@ -203,10 +203,10 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                     .getMap();
 
             // Move the camera instantly to hamburg with a zoom of 15.
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LYON, 15));
+            //map.moveCamera(CameraUpdateFactory.newLatLngZoom(LYON, 15));
 
             // Zoom in, animating the camera.
-            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+            //map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
             //the following part can be useful to navigate between the two modes (list and maps)
 /*
 
