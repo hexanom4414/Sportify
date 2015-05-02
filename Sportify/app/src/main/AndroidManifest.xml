@@ -33,8 +33,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CollectionDemoActivity" android:label="@string/demo_collection" />
-
 
 
     </application>

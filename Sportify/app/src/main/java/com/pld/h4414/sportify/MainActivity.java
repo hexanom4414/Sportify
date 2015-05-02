@@ -24,7 +24,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -131,7 +130,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 1:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new LaunchpadSectionFragment();
+                    return new GmapsFragment();
 
                 default:
                     // The other sections of the app are dummy placeholders.
@@ -145,7 +144,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public int getCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -158,13 +157,15 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 0:
                     return R.drawable.ic_find;
                 case 1:
+                    return R.drawable.ic_sportify;
+                case 2:
                     return R.drawable.ic_add;
 
-                case 2:
+                case 3:
 
                     return R.drawable.ic_friends;
 
-                case 3:
+                case 4:
 
                     return R.drawable.ic_user;
 
@@ -178,25 +179,20 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     }
 
+
     /**
-     * A fragment that launches other parts of the demo application.
+     * You can create here a gmaps fragment following the dummy fragment model
      */
-    public static class LaunchpadSectionFragment extends Fragment {
+    public static class GmapsFragment extends Fragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_launchpad, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_gmaps, container, false);
+
+
+            //the following part can be useful to navigate between the two modes (list and maps)
 /*
-            // Demonstration of a collection-browsing activity.
-            rootView.findViewById(R.id.demo_collection_button)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Intent intent = new Intent(getActivity(), CollectionDemoActivity.class);
-                            startActivity(intent);
-                        }
-                    });
 
             // Demonstration of navigating to external activities.
             rootView.findViewById(R.id.demo_external_activity)
@@ -237,4 +233,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return rootView;
         }
     }
+
+
+
 }
