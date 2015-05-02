@@ -17,25 +17,19 @@
 package com.pld.h4414.sportify;
 
 import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -187,26 +181,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
     /**
-     * You can create here a GmapsFragment fragment following the dummy fragment model
+     * You can create here a gmaps fragment following the dummy fragment model
      */
     public static class GmapsFragment extends Fragment {
-
-        private static final LatLng LYON = new LatLng(45.750000, 4.850000);
-        private GoogleMap map;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_gmaps, container, false);
 
-            map = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
 
-            // Move the camera instantly to hamburg with a zoom of 15.
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LYON, 15));
-
-            // Zoom in, animating the camera.
-            map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
             //the following part can be useful to navigate between the two modes (list and maps)
 /*
 
@@ -230,16 +214,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             return rootView;
         }
-        /**
-         * Adds a marker to the map
-         */
-        private void addMarker(LatLng pos){
-
-            /** Make sure that the map has been initialised **/
-                map.addMarker(new MarkerOptions()
-                                .position(pos)
-                );
-        }
     }
 
     /**
@@ -259,6 +233,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             return rootView;
         }
     }
+
 
 
 }
