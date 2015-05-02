@@ -31,6 +31,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.SupportMapFragment;
+
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
     /**
@@ -130,8 +132,9 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 1:
                     // The first section of the app is the most interesting -- it offers
                     // a launchpad into the other demonstrations in this example application.
-                    return new GmapsFragment();
-
+//                    return new GmapsFragment();
+                    GmapsFragment mapFragment = new GmapsFragment();
+                    return mapFragment.newInstance();
                 default:
                     // The other sections of the app are dummy placeholders.
                     Fragment fragment = new DummySectionFragment();
@@ -183,7 +186,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     /**
      * You can create here a gmaps fragment following the dummy fragment model
      */
-    public static class GmapsFragment extends Fragment {
+    public static class GmapsFragment extends SupportMapFragment {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
