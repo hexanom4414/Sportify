@@ -125,6 +125,10 @@ public class ConnectionActivity extends Activity implements
             new DownloadImageTask((ImageView) findViewById(R.id.personPhoto_image))
                     .execute(currentPerson.getImage().getUrl());
 
+            //transition to another activity here
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+
         }
         else
         {
@@ -175,9 +179,7 @@ public class ConnectionActivity extends Activity implements
                 ((ImageView)findViewById(R.id.personPhoto_image)).setImageResource(0);
 
 
-                //transition to another activity here
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+
 
 
             }
@@ -214,6 +216,9 @@ public class ConnectionActivity extends Activity implements
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+
+
+
         }
     }
 
