@@ -123,7 +123,7 @@ public class ConnectionActivity extends Activity implements
             ((TextView)findViewById(R.id.email_text)).setText(Plus.AccountApi.getAccountName(mGoogleApiClient));
 
             // Register user
-            //SpotifyRestClient.registerUser(Plus.AccountApi.getAccountName(mGoogleApiClient), currentPerson.getDisplayName())
+            //SpotifyRestClient.registerUser(Plus.AccountApi.getAccountName(mGoogleApiClient), currentPerson.getFamilyName(), currentPerson.getGivenName())
 
 
             new DownloadImageTask((ImageView) findViewById(R.id.personPhoto_image))
