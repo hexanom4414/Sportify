@@ -16,7 +16,12 @@
 
 package com.pld.h4414.sportify;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
+import android.animation.LayoutTransition;
+import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -29,9 +34,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import com.google.android.gms.maps.SupportMapFragment;
+
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -129,19 +137,34 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         @Override
         public Fragment getItem(int i) {
             switch (i) {
+
+                case 0:
+
+                    return new FindFragment();
+
+
                 case 1:
-                    // The first section of the app is the most interesting -- it offers
-                    // a launchpad into the other demonstrations in this example application.
+
 //                    return new GmapsFragment();
                     GmapsFragment mapFragment = new GmapsFragment();
                     return mapFragment.newInstance();
+
+                case 2:
+
+                    return new SportifyActionFragment();
+
+                case 3:
+                    return new FriendsFragment();
+
+                case 4:
+
+                    return new UserFragment();
+
                 default:
-                    // The other sections of the app are dummy placeholders.
-                    Fragment fragment = new DummySectionFragment();
-                    Bundle args = new Bundle();
-                    args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-                    fragment.setArguments(args);
-                    return fragment;
+
+                    return new UserFragment();
+
+
             }
         }
 
@@ -193,7 +216,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_gmaps, container, false);
 
-
             //the following part can be useful to navigate between the two modes (list and maps)
 /*
 
@@ -222,19 +244,128 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     /**
      * A dummy fragment representing a section of the app, but that simply displays dummy text.
      */
-    public static class DummySectionFragment extends Fragment {
+    public static class UserFragment extends Fragment {
 
-        public static final String ARG_SECTION_NUMBER = "section_number";
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_section_dummy, container, false);
-            Bundle args = getArguments();
-            ((TextView) rootView.findViewById(android.R.id.text1)).setText(
-                    getString(R.string.dummy_section_text, args.getInt(ARG_SECTION_NUMBER)));
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+
+
+        // Here retrieve the photo and the name of the user if he's connected
+
+
+        // show his sports in the gridview
+
+
+
+
+
             return rootView;
         }
+    }
+    /**
+     * A  fragment showing the principal action buttons of the app
+     */
+    public static class SportifyActionFragment extends Fragment {
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            final View rootView = inflater.inflate(R.layout.fragment_sportify_action, container, false);
+            View createButton = rootView.findViewById(R.id.createEventButton);
+
+           /* //create animation for adding the buttons
+            LayoutTransition showButtons = new LayoutTransition();
+            ObjectAnimator anim = ObjectAnimator.ofFloat(createButton, "rotation", 0, 90);
+            anim.setDuration(6000);
+            showButtons.setAnimator(LayoutTransition.CHANGE_APPEARING, anim);
+            container.setLayoutTransition(showButtons);*/
+
+
+            //click listener of the buttons
+
+                    createButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                           /* AnimatorSet buttonSet = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.fab_animation);
+                            buttonSet.setTarget(view);
+                            buttonSet.start();*/
+
+
+                            //transition to another activity here
+
+                            Intent intent = new Intent(getActivity(),ModalCreateActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+            rootView.findViewById(R.id.joinEventButton)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //transition to another activity here
+                            Intent intent = new Intent(getActivity(), ModalFilterActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+
+            return rootView;
+        }
+    }
+
+        /**
+         * A  fragment showing the friends section
+         */
+        public static class FriendsFragment extends Fragment {
+
+
+            @Override
+            public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                     Bundle savedInstanceState) {
+                View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+
+                //click listener of the buttons
+            /*rootView.findViewById(R.id.demo_external_activity)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                        }
+                    });*/
+                return rootView;
+            }
+
+
+    }
+
+    /**
+     * A  fragment showing the find section
+     */
+    public static class FindFragment extends Fragment {
+
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_find, container, false);
+
+            //click listener of the buttons
+            /*rootView.findViewById(R.id.demo_external_activity)
+                    .setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                        }
+                    });*/
+            return rootView;
+        }
+
+
     }
 
 
