@@ -31,4 +31,7 @@
     <string name="title_activity_modal_filter">ModalFilterActivity</string>
     <string name="title_activity_friends_details">FriendsDetailsActivity</string>
     <string name="title_activity_modal_sport_detail">ModalSportDetailActivity</string>
+    <string name="validate_button_text">Valider</string>
+    <string name="time_picker_text">Heure</string>
+    <string name="date_picker_text">Date</string>
 </resources>
