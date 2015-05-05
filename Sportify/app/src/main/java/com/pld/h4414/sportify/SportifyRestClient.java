@@ -1,18 +1,21 @@
 package com.pld.h4414.sportify;
 
 import android.graphics.Bitmap;
+import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestHandle;
+
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.ResponseHandlerInterface;
+import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 /**
  * Created by KEV on 04/05/15.
@@ -20,19 +23,19 @@ import java.util.ArrayList;
 public class SportifyRestClient {
 
 
-    private static final String BASE_URL = "http://localhost:8080";
+    private static final String BASE_URL = "http://10.0.2.2:8080";
 
     // Make RESTful webservice call using AsyncHttpClient object
-    private static AsyncHttpClient client = new AsyncHttpClient();
+    private static SyncHttpClient client = new SyncHttpClient();
 
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
-    private static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    private static void get(String url, RequestParams params, ResponseHandlerInterface responseHandler) {
         client.get(getAbsoluteUrl(url), params ,responseHandler);
     }
 
-    private static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+    private static void post(String url, RequestParams params, ResponseHandlerInterface responseHandler) {
         client.post(getAbsoluteUrl(url), params, responseHandler);
     }
 
@@ -95,15 +98,19 @@ public class SportifyRestClient {
 
 
     public ArrayList<String> listSports(){
-       ArrayList <String> sport_list =new  ArrayList<String>() ;
+       ArrayList <String> sport_list = new  ArrayList<String>() ;
 
 
-       JSONObject results =  getWebServiceInvocation(null,"/sports");
+       JSONArray results =  getWebServiceInvocation(new RequestParams(),"/fetch/sports");
+        System.out.println("arrivée "+results.length());
+
 
         try {
 
+            for (int i = 0; i < results.length(); i++) {
+               sport_list.add(results.getJSONObject(i).getString("name"));
+            }
 
-            results.getString("nom");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -115,7 +122,7 @@ public class SportifyRestClient {
     public ArrayList<String> listLocations(){
         ArrayList <String> location_list = new  ArrayList<String>();
 
-        JSONObject results =  getWebServiceInvocation(null,"/");
+        JSONArray results =  getWebServiceInvocation(null,"/fetch/fields");
 
         return location_list;
     }
@@ -123,7 +130,7 @@ public class SportifyRestClient {
     public ArrayList<String> listLocations(String sport){
         ArrayList <String> location_list  = new  ArrayList<String>();
 
-        JSONObject results  =  getWebServiceInvocation(null,"/");
+        JSONArray results  =  getWebServiceInvocation(null,"/fetch/fields");
 
         return location_list;
     }
@@ -135,28 +142,36 @@ public class SportifyRestClient {
      * @param suffixe
      *
      */
-    private JSONObject getWebServiceInvocation(RequestParams params, String suffixe){
+    private JSONArray getWebServiceInvocation(RequestParams params, String suffixe){
         // Show Progress Dialog
 
         JsonHttpResponseHandler handler =  new JsonHttpResponseHandler();
+        handler.setUseSynchronousMode(true);
         this.get(suffixe, params, handler);
+
+        handler.s.acquireUninterruptibly();
+
         return handler.getResult();
 
     }
 
 
     public class JsonHttpResponseHandler extends com.loopj.android.http.JsonHttpResponseHandler {
-        private JSONObject result;
+        private JSONArray result ;
+        private boolean finExec = false;
+        public Semaphore s = new Semaphore(1);
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
             // If the response is JSONObject instead of expected JSONArray
+            result = new JSONArray();
 
             try {
                 // JSON Object
                 // When the JSON response has status boolean value assigned with true
-                if(response.getString("result")== "success"){
-                     setResult(response.getJSONObject("json"));
+                if(response.getString("success")== "true"){
+                     setResult(response.getJSONArray("data"));
+                    System.out.println("départ " + response.getJSONArray("data").length());
 
 
                 }
@@ -164,22 +179,36 @@ public class SportifyRestClient {
                 else{
                     //gestion erreur
 
-                    response.getString("error");
+                    System.out.println("erreur");
                 }
             } catch (JSONException e) {
                 // TODO Auto-generated catch block
-                // message = "Error Occured [Server's JSON response might be invalid]!";
+                System.out.println( "Error Occurred [Server's JSON response might be invalid]!");
                 e.printStackTrace();
 
             }
 
 
         }
-        public JSONObject getResult(){
+
+        @Override
+        public void onFailure(Throwable e, JSONObject errorResponse) {
+            super.onFailure(e, errorResponse);
+            System.out.println("failure");
+
+        }
+
+        @Override
+        public void onFinish() {
+
+            s.release();
+        }
+
+        public JSONArray getResult(){
             return result;
         }
 
-        private void setResult(JSONObject object){
+        private void setResult(JSONArray object){
 
         result = object;
 
@@ -199,7 +228,7 @@ public class SportifyRestClient {
      */
     private void postWebServiceInvocation(RequestParams params, String suffixe){
 
-        
+
         this.post(suffixe, params, new JsonHttpResponseHandler() );
 
 

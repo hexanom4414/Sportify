@@ -28,7 +28,8 @@
         android:text="@string/validate_button_text"
         android:id="@+id/validate"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:onClick="createEvent" />
 
     <Button
         android:layout_width="wrap_content"
