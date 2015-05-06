@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="type_search_array">
+        <item>Peu importe ?</item>
+        <item>Terrain</item>
+        <item>Match</item>
+        <item>Tournoi</item>
+    </string-array>
+</resources>
