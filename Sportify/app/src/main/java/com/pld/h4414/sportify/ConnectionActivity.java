@@ -115,15 +115,15 @@ public class ConnectionActivity extends Activity implements
         RequestParams params = new RequestParams();
         Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-        params.put("nom", currentPerson.getName().getFamilyName());
-        params.put("prenom", currentPerson.getName().getGivenName());
-        params.put("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
+//        params.put("nom", currentPerson.getName().getFamilyName());
+//        params.put("prenom", currentPerson.getName().getGivenName());
+//        params.put("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
 
-        this.postUserWebServiceInvocation(params,"/utilisateur");
-
-        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) == null) {
-            System.err.println("Null person");
-        }
+//        this.postUserWebServiceInvocation(params,"/utilisateur");
+//
+//        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) == null) {
+//            System.err.println("Null person");
+//        }
     }
 
     @Override
@@ -173,7 +173,7 @@ public class ConnectionActivity extends Activity implements
         if(mGoogleApiClient.isConnected()) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-            Intent intent = new Intent(this, ViewPagerActivity.class);
+            Intent intent = new Intent(this, MainActivity.class);
 
             if (currentPerson != null) {
                 intent.putExtra("validPerson", true);

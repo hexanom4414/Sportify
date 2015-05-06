@@ -8,7 +8,10 @@ public class InstallationSportive {
     int _id;
     int _nbTerrains;
     String _adresse;
+    String _nom;
     int _sports;
+    Double _latitude;
+    Double _longitude;
 
 // empty constructor
     public InstallationSportive() {
@@ -16,11 +19,22 @@ public class InstallationSportive {
 
 
     // constructor
-    public InstallationSportive(int id, int nbTerrains, String adresse, int sports) {
+    public InstallationSportive(int id, int nbTerrains, String adresse, int sports,Double latitude,Double longitude) {
         this._id = id;
         this._nbTerrains = nbTerrains;
         this._adresse = adresse;
         this._sports = sports;
+        this._latitude = latitude;
+        this._longitude = longitude;
+    }
+
+    // constructor
+    public InstallationSportive(int id,String nom, String adresse,Double latitude,Double longitude) {
+        this._id = id;
+        this._nom = nom;
+        this._adresse = adresse;
+        this._latitude = latitude;
+        this._longitude = longitude;
     }
 
     // constructor

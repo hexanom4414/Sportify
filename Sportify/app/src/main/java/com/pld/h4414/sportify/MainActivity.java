@@ -16,9 +16,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.pld.h4414.sportify.model.InstallationSportive;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -32,6 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends Activity implements SearchOptionsFragment.OnFragmentInteractionListener, OnMapReadyCallback {
 
@@ -41,13 +46,14 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
     private GoogleMap map;
     private String mTypeSearch;
     private SearchView mSearchView;
+    private MenuItem searchItem;
     private ProgressDialog mProgressDialog;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayShowTitleEnabled(false);
+        getActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {   // first opening of the app create the two fragment -> convert:
@@ -87,7 +93,43 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
     }
 
     public void invokeWS(){
+        SportifyRestClient client = new SportifyRestClient();
 
+        client.get("/fetch/installation_sportive", null, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
+                ArrayList<String> mListResult = new ArrayList<String>();
+                // If the response is JSONObject instead of expected JSONArray
+                mProgressDialog.dismiss();
+
+                try {
+                    if (response.getBoolean("success")) {
+                        JSONArray data = response.getJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject row = data.getJSONObject(i);
+                            InstallationSportive aInstallationSportive = new InstallationSportive(row.getInt("id"),row.getString("nom"),row.getString("adresse"),row.getDouble("latitude"),row.getDouble("longitude"));
+
+                            mResult.add(aInstallationSportive);
+                            mListResult.add(row.getString("nom"));
+                        }
+                    }
+                    else {
+                        //gestion erreur
+                    }
+//                    Toast.makeText(getApplicationContext(), "" + mResult, Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                searchItem.collapseActionView();
+
+                ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
+                mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.results_list_item, mListResult));
+            }
+        });
 
     }
 
@@ -99,8 +141,9 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
         inflater.inflate(R.menu.menu_main, menu);
 
         // Get the SearchView and set the searchable configuration
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchItem =  menu.findItem(R.id.action_search);
+//        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         mSearchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
         mSearchView.setOnSearchClickListener(new View.OnClickListener() {    //open (replace) the fragment for choosing the type of search. Here : Terrain, Evenement
@@ -113,6 +156,21 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                         .commit();
             }
         });
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+//                MenuItem searchMenuItem = getSearchMenuItem();
+                if (searchItem != null) {
+                    searchItem.collapseActionView();
+                }
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // ...
+                return true;
+            }
+        });
         mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
@@ -122,7 +180,7 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                 return false;
             }
         });
-
+//
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
         mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
