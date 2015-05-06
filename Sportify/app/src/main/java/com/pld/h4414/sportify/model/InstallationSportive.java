@@ -1,4 +1,4 @@
-package com.h4414.bdd.sportify.model;
+package com.pld.h4414.sportify.model;
 
 /**
  * Created by Meryem on 30/04/15.
@@ -13,6 +13,7 @@ public class InstallationSportive {
 // empty constructor
     public InstallationSportive() {
     }
+
 
     // constructor
     public InstallationSportive(int id, int nbTerrains, String adresse, int sports) {

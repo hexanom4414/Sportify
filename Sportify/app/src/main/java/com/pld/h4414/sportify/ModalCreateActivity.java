@@ -16,6 +16,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import com.pld.h4414.sportify.model.Event;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -34,22 +35,20 @@ import java.util.Date;
 
 public class ModalCreateActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener {
 
-   // private static SportifyEvent event ;
 
-
-
-
+    private static Event event;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modal_create);
 
-     //   event = new SportifyEvent();
+        event = new Event();
 
         // Call webservices to populate the spinners
 
         this.getSportsWebServiceInvocation(new RequestParams(), "/fetch/sport");
-        this.getLocationWebServiceInvocation(new RequestParams(), "/fetch/installation_sportive");
+
+
 
     }
 
@@ -326,14 +325,21 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
             Toast.makeText(getApplicationContext(),"coucou",Toast.LENGTH_LONG).show();
 
 
-           // event.setSport((String)parent.getItemAtPosition(position));
+            event.set_sport((String) parent.getItemAtPosition(position));
 
        }else if(parent.getId() == R.id.locationPicker){
 
 
-            Toast.makeText(getApplicationContext(),"je suis là",Toast.LENGTH_LONG).show();
+            String suffixe = "/fetch/installation_sportive?filter=sport";
 
-           // event.setLocation((String)parent.getItemAtPosition(position));
+            suffixe = suffixe + "arg=" + event.get_sport() ;
+            this.getLocationWebServiceInvocation(new RequestParams(), suffixe);
+
+
+
+            //Toast.makeText(getApplicationContext(),"je suis là",Toast.LENGTH_LONG).show();
+
+            event.set_installation((String) parent.getItemAtPosition(position));
 
        }
 
@@ -341,6 +347,14 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
+
+
+        if (parent.getId() == R.id.sportPicker){
+
+            Toast.makeText(getApplicationContext(),"Choisissez un sport",Toast.LENGTH_LONG).show();
+
+
+        }
 
     }
 
@@ -383,7 +397,10 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
-       // event.setTime(hourOfDay, minute);
+
+
+
+        event.set_time(hourOfDay, minute);
 
         }
     }
@@ -406,7 +423,8 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
 
-          //  event.setDate(new Date(year,month,day));
+            event.set_date(new Date(year,month,day));
+
 
 
         }
@@ -422,11 +440,12 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         RequestParams params = new RequestParams();
 
-       // params.put("",);
-       // params.put("",);
-       // params.put("",);
+        params.put("date_evenement", event.get_date());
+        params.put("installation_sportive", event.get_installation());
+        params.put("sport", event.get_sport());
+        params.put("email_createur", event.get_email_user());
 
-        this.postEventWebServiceInvocation(params, "/fetch/sport");
+        this.postEventWebServiceInvocation(params, "/evenement");
       //  Toast.makeText(getApplicationContext(), event+"",Toast.LENGTH_LONG).show();
 
     }

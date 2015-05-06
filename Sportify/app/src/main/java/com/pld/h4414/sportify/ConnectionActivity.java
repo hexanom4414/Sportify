@@ -242,6 +242,8 @@ public class ConnectionActivity extends Activity implements
 
         System.out.println(sharedPref.getString("first_name", ""));
     }
+
+
     public boolean registerUser(String email, String familyName, String firstName){
 
         boolean result = false;
