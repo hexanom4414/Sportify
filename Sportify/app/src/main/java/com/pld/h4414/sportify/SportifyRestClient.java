@@ -48,41 +48,7 @@ public class SportifyRestClient {
     }
 
 
-    public boolean registerUser(String email, String familyName, String firstName){
 
-        boolean result = false;
-
-        //If user doesn't exists create it
-        RequestParams params = new RequestParams();
-
-
-        if (familyName != null && firstName != null && email !=null) {
-
-
-            // Put Http parameter username
-            // params.put("username", email);
-            // Put Http parameter lastname
-            //params.put("lastname", familyName);
-
-            // Put Http parameter firstname
-
-            //params.put("firstname", firstName);
-
-            // Invoke RESTful Web Service with Http parameters
-
-            //postWebServiceInvocation(params,"/user");
-
-
-
-        }
-
-
-
-
-
-        return result;
-
-    }
 
     public String getUserName(String email){
 
@@ -295,11 +261,29 @@ public class SportifyRestClient {
      * @param suffixe
      *
      */
-    private void postWebServiceInvocation(RequestParams params, String suffixe){
+    public void postWebServiceInvocation(RequestParams params, String suffixe, JsonHttpResponseHandler handler){
 
 
-        this.post(suffixe, params, new JsonHttpResponseHandler() );
+        this.post(suffixe, params, handler );
 
 
     }
+
+
+    /**
+     * Method that performs RESTful webservice invocations
+     *
+     * @param params
+     * @param suffixe
+     *
+     */
+    public void getWebServiceInvocation(RequestParams params, String suffixe, JsonHttpResponseHandler handler){
+
+
+        this.get(suffixe, params, handler);
+
+
+    }
+
+
 }

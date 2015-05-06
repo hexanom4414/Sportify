@@ -1,4 +1,4 @@
-    package com.pld.h4414.sportify;
+package com.pld.h4414.sportify;
 
 import android.app.Activity;
 import android.content.Context;
@@ -106,6 +106,7 @@ public class ConnectionActivity extends Activity implements
         if (requestCode == RC_SIGN_IN) {
             mIntentInProgress = false;
 
+
             if (!mGoogleApiClient.isConnected() && responseCode == RESULT_OK) {
                 mGoogleApiClient.reconnect();
             }
@@ -117,7 +118,26 @@ public class ConnectionActivity extends Activity implements
         mSignInClicked = false;
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
-        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) == null) {
+        if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+            ((TextView)findViewById(R.id.personName_text)).setText(currentPerson.getDisplayName());
+            ((TextView)findViewById(R.id.email_text)).setText(Plus.AccountApi.getAccountName(mGoogleApiClient));
+
+            // Register user
+
+
+            saveUserInfo(Plus.AccountApi.getAccountName(mGoogleApiClient), currentPerson.getName().getFamilyName(), currentPerson.getName().getGivenName());
+
+
+            new DownloadImageTask((ImageView) findViewById(R.id.personPhoto_image))
+                    .execute(currentPerson.getImage().getUrl());
+
+
+
+        }
+        else
+        {
             System.err.println("Null person");
         }
     }
@@ -158,7 +178,16 @@ public class ConnectionActivity extends Activity implements
         else if (view.getId() == R.id.sign_out_button) {
             if (mGoogleApiClient.isConnected()) {
                 mGoogleApiClient.clearDefaultAccountAndReconnect();
-                Toast.makeText(this, "Sign out", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Sign out", Toast.LENGTH_LONG).show();
+
+                ((TextView)findViewById(R.id.personName_text)).setText("");
+                ((TextView)findViewById(R.id.email_text)).setText("");
+                ((ImageView)findViewById(R.id.personPhoto_image)).setImageResource(0);
+
+
+
+
+
             }
         }
     }
@@ -166,27 +195,52 @@ public class ConnectionActivity extends Activity implements
     public void nextAction(View view) {
 
         //transition to another activity here
-        if(mGoogleApiClient.isConnected()) {
-            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-
-            Intent intent = new Intent(this, MainActivity.class);
-
-            if (currentPerson != null) {
-                intent.putExtra("validPerson", true);
-                intent.putExtra("familyName", currentPerson.getName().getFamilyName());
-                intent.putExtra("givenName", currentPerson.getName().getGivenName());
-                intent.putExtra("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
-                intent.putExtra("urlImage", currentPerson.getImage().getUrl());
-            } else {
-                intent.putExtra("validPerson", false);
-            }
-
-            startActivity(intent);
-        }
-        else
-        {
-            Toast.makeText(this, "Please connect", Toast.LENGTH_LONG).show();
-        }
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
 
     }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+
+
+
+        }
+    }
+
+    private void saveUserInfo (String email, String family_name, String first_name){
+
+        SharedPreferences sharedPref =getSharedPreferences("save_data_file", Context.MODE_PRIVATE);
+
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("email", email);
+        editor.putString("first_name", first_name);
+        editor.putString("family_name", family_name);
+        editor.commit();
+
+        System.out.println(sharedPref.getString("first_name", ""));
+    }
+
+
 }

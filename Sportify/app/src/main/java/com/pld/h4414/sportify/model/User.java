@@ -1,4 +1,4 @@
-package com.h4414.bdd.sportify.model;
+package  com.pld.h4414.sportify.model;
 
 /**
  * Created by Meryem on 30/04/15.
