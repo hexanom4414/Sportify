@@ -133,9 +133,7 @@ public class ConnectionActivity extends Activity implements
             new DownloadImageTask((ImageView) findViewById(R.id.personPhoto_image))
                     .execute(currentPerson.getImage().getUrl());
 
-            //transition to another activity here
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+
 
         }
         else
@@ -194,7 +192,7 @@ public class ConnectionActivity extends Activity implements
         }
     }
     /** Called when the user clicks the Ignore button */
-    public void ignoreAction(View view) {
+    public void nextAction(View view) {
 
         //transition to another activity here
         Intent intent = new Intent(this, MainActivity.class);
@@ -231,15 +229,17 @@ public class ConnectionActivity extends Activity implements
     }
 
     private void saveUserInfo (String email, String family_name, String first_name){
-        Context context = getApplicationContext();
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                getString(R.string.save_data_file_key), Context.MODE_PRIVATE);
+
+        SharedPreferences sharedPref =getSharedPreferences("save_data_file", Context.MODE_PRIVATE);
+
 
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(getString(R.string.saved_email), email);
-        editor.putString(getString(R.string.saved_first_name), first_name);
-        editor.putString(getString(R.string.saved_family_name), family_name);
+        editor.putString("email", email);
+        editor.putString("first_name", first_name);
+        editor.putString("family_name", family_name);
         editor.commit();
+
+        System.out.println(sharedPref.getString("first_name", ""));
     }
 
 

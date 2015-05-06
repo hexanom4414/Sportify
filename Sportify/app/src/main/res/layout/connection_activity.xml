@@ -57,9 +57,9 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ignorer >>"
+        android:text="Suivant >>"
         android:id="@+id/button"
-        android:onClick="ignoreAction"
+        android:onClick="nextAction"
         android:layout_alignBottom="@+id/personName_text"
         android:layout_toRightOf="@+id/personPhoto_image"
         android:layout_toEndOf="@+id/personPhoto_image" />
