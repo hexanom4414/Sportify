@@ -262,15 +262,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
             // Here retrieve the photo and the name of the user if he's connected
             Intent intent = getActivity().getIntent();
-            String first_name = intent.getStringExtra("givenName");
-            String family_name = intent.getStringExtra("familyName");
-            String email = intent.getStringExtra("email");
-            String imgUrl = intent.getStringExtra("urlImage");
 
-            // show his sports in the gridview
-            new DownloadImageTask((ImageView) rootView.findViewById(R.id.imageView)).execute(imgUrl);
-            TextView text_name = (TextView)rootView.findViewById(R.id.name);
-            text_name.setText(first_name+" "+family_name);
+            if(intent.getBooleanExtra("validPerson", false))
+            {
+                String first_name = intent.getStringExtra("givenName");
+                String family_name = intent.getStringExtra("familyName");
+                String email = intent.getStringExtra("email");
+                String imgUrl = intent.getStringExtra("urlImage");
+
+                // show his sports in the gridview
+                new DownloadImageTask((ImageView) rootView.findViewById(R.id.imageView)).execute(imgUrl);
+                TextView text_name = (TextView) rootView.findViewById(R.id.name);
+                text_name.setText(first_name + " " + family_name);
+            }
+            else
+            {
+                ((TextView) rootView.findViewById(R.id.name)).setText("no user");
+            }
 
             return rootView;
         }

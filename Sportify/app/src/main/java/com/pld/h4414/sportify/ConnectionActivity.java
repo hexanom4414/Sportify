@@ -166,15 +166,27 @@ public class ConnectionActivity extends Activity implements
     public void nextAction(View view) {
 
         //transition to another activity here
-        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
-        Intent intent = new Intent(this, MainActivity.class);
+        if(mGoogleApiClient.isConnected()) {
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-        intent.putExtra("familyName", currentPerson.getName().getFamilyName());
-        intent.putExtra("givenName", currentPerson.getName().getGivenName());
-        intent.putExtra("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
-        intent.putExtra("urlImage", currentPerson.getImage().getUrl());
+            Intent intent = new Intent(this, MainActivity.class);
 
-        startActivity(intent);
+            if (currentPerson != null) {
+                intent.putExtra("validPerson", true);
+                intent.putExtra("familyName", currentPerson.getName().getFamilyName());
+                intent.putExtra("givenName", currentPerson.getName().getGivenName());
+                intent.putExtra("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
+                intent.putExtra("urlImage", currentPerson.getImage().getUrl());
+            } else {
+                intent.putExtra("validPerson", false);
+            }
+
+            startActivity(intent);
+        }
+        else
+        {
+            Toast.makeText(this, "Please connect", Toast.LENGTH_LONG).show();
+        }
 
     }
 }
