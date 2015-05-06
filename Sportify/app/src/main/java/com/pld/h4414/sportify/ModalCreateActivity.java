@@ -42,6 +42,14 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modal_create);
 
+        Spinner sport_spinner = (Spinner) findViewById(R.id.locationPicker);
+        Spinner location_spinner = (Spinner) findViewById(R.id.sportPicker);
+
+        sport_spinner.setOnItemSelectedListener(this);
+
+        location_spinner.setOnItemSelectedListener(this);
+
+
         event = new Event();
 
         // Call webservices to populate the spinners
@@ -318,26 +326,20 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
 
 
-        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
 
         if (parent.getId() == R.id.sportPicker){
 
-            Toast.makeText(getApplicationContext(),"coucou",Toast.LENGTH_LONG).show();
 
 
             event.set_sport((String) parent.getItemAtPosition(position));
 
-       }else if(parent.getId() == R.id.locationPicker){
-
-
             String suffixe = "/fetch/installation_sportive?filter=sport";
 
-            suffixe = suffixe + "arg=" + event.get_sport() ;
+            suffixe = suffixe + "&arg=" + event.get_sport() ;
             this.getLocationWebServiceInvocation(new RequestParams(), suffixe);
 
+       }else if(parent.getId() == R.id.locationPicker){
 
-
-            //Toast.makeText(getApplicationContext(),"je suis là",Toast.LENGTH_LONG).show();
 
             event.set_installation((String) parent.getItemAtPosition(position));
 
