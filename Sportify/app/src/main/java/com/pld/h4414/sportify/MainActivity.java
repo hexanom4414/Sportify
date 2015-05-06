@@ -24,7 +24,10 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -32,6 +35,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +45,8 @@ import android.widget.TextView;
 
 
 import com.google.android.gms.maps.SupportMapFragment;
+
+import java.io.InputStream;
 
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
@@ -249,30 +255,49 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
      */
     public static class UserFragment extends Fragment {
 
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-            String defaultValue ="";
 
-        // Here retrieve the photo and the name of the user if he's connected
+            // Here retrieve the photo and the name of the user if he's connected
+            Intent intent = getActivity().getIntent();
+            String first_name = intent.getStringExtra("givenName");
+            String family_name = intent.getStringExtra("familyName");
+            String email = intent.getStringExtra("email");
+            String imgUrl = intent.getStringExtra("urlImage");
 
-            SharedPreferences sharedPref = getActivity().getSharedPreferences(
-                    getString(R.string.save_data_file_key), Context.MODE_PRIVATE);
-            String first_name = sharedPref.getString(getString(R.string.saved_first_name), defaultValue);
-            String family_name = sharedPref.getString(getString(R.string.saved_family_name), defaultValue);
-
+            // show his sports in the gridview
+            new DownloadImageTask((ImageView) rootView.findViewById(R.id.imageView)).execute(imgUrl);
             TextView text_name = (TextView)rootView.findViewById(R.id.name);
             text_name.setText(first_name+" "+family_name);
-            // show his sports in the gridview
-
-
-
-
-
 
             return rootView;
+        }
+
+        private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+            ImageView bmImage;
+
+            public DownloadImageTask(ImageView bmImage) {
+                this.bmImage = bmImage;
+            }
+
+            protected Bitmap doInBackground(String... urls) {
+                String urldisplay = urls[0];
+                Bitmap mIcon11 = null;
+                try {
+                    InputStream in = new java.net.URL(urldisplay).openStream();
+                    mIcon11 = BitmapFactory.decodeStream(in);
+                } catch (Exception e) {
+                    Log.e("Error", e.getMessage());
+                    e.printStackTrace();
+                }
+                return mIcon11;
+            }
+
+            protected void onPostExecute(Bitmap result) {
+                bmImage.setImageBitmap(result);
+            }
         }
     }
     /**
