@@ -1,13 +1,15 @@
 package com.pld.h4414.sportify;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.ResponseHandlerInterface;
-import com.loopj.android.http.SyncHttpClient;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -15,27 +17,33 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by KEV on 04/05/15.
  */
+
+
+
 public class SportifyRestClient {
-
-
-    private static final String BASE_URL = "http://10.0.2.2:8080";
+    public static JSONArray result  = new JSONArray();
+    private static final String BASE_URL = "http://91.229.95.108:80";
+    //static public final Lock _mutex = new ReentrantLock(true);
+    CountDownLatch latch = new CountDownLatch(1);
 
     // Make RESTful webservice call using AsyncHttpClient object
-    private static SyncHttpClient client = new SyncHttpClient();
+    private static AsyncHttpClient client = new AsyncHttpClient();
 
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;
     }
-    private static void get(String url, RequestParams params, ResponseHandlerInterface responseHandler) {
+    private static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params ,responseHandler);
     }
 
-    private static void post(String url, RequestParams params, ResponseHandlerInterface responseHandler) {
+    private static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.post(getAbsoluteUrl(url), params, responseHandler);
     }
 
@@ -54,15 +62,18 @@ public class SportifyRestClient {
             // Put Http parameter username
             // params.put("username", email);
             // Put Http parameter lastname
-            params.put("lastname", familyName);
+            //params.put("lastname", familyName);
 
             // Put Http parameter firstname
 
-            params.put("firstname", firstName);
+            //params.put("firstname", firstName);
 
             // Invoke RESTful Web Service with Http parameters
 
-            postWebServiceInvocation(params,"/user");
+            //postWebServiceInvocation(params,"/user");
+
+
+
         }
 
 
@@ -101,14 +112,21 @@ public class SportifyRestClient {
        ArrayList <String> sport_list = new  ArrayList<String>() ;
 
 
-       JSONArray results =  getWebServiceInvocation(new RequestParams(),"/fetch/sports");
-        System.out.println("arrivée "+results.length());
+
+        do{
+            getWebServiceInvocation(new RequestParams(), "/fetch/sport");
+
+        }while (result.length()==0);
+
+
+
+        System.out.println("arrivée "+result.length());
 
 
         try {
 
-            for (int i = 0; i < results.length(); i++) {
-               sport_list.add(results.getJSONObject(i).getString("name"));
+            for (int i = 0; i < result.length(); i++) {
+               sport_list.add(result.getJSONObject(i).getString("name"));
             }
 
         } catch (JSONException e) {
@@ -145,19 +163,69 @@ public class SportifyRestClient {
     private JSONArray getWebServiceInvocation(RequestParams params, String suffixe){
         // Show Progress Dialog
 
-        JsonHttpResponseHandler handler =  new JsonHttpResponseHandler();
-        handler.setUseSynchronousMode(true);
-        this.get(suffixe, params, handler);
 
-        handler.s.acquireUninterruptibly();
 
-        return handler.getResult();
+        this.get(suffixe, params, new JsonHttpResponseHandler(){
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+
+                try {
+                    // JSON Object
+                    // When the JSON response has status boolean value assigned with true
+                    if(response.getString("success") == "true"){
+                        result = response.getJSONArray("data");
+                        System.out.println("départ " + result.length());
+
+
+                    }
+                    // Else display error message
+                    else{
+                        //gestion erreur
+
+                        System.out.println("erreur");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    System.out.println( "Error Occurred [Server's JSON response might be invalid]!");
+                    e.printStackTrace();
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+                System.out.println("failure");
+
+            }
+
+            @Override
+            public void onFinish() {
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+        });
+
+
+        return result;
 
     }
 
 
+
+    /*
     public class JsonHttpResponseHandler extends com.loopj.android.http.JsonHttpResponseHandler {
-        private JSONArray result ;
+        private JSONArray result = new JSONArray() ;
         private boolean finExec = false;
         public Semaphore s = new Semaphore(1);
 
@@ -219,6 +287,7 @@ public class SportifyRestClient {
 
 
     }
+    */
     /**
      * Method that performs RESTful webservice invocations
      *
@@ -230,8 +299,6 @@ public class SportifyRestClient {
 
 
         this.post(suffixe, params, new JsonHttpResponseHandler() );
-
-
 
 
     }

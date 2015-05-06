@@ -34,4 +34,8 @@
     <string name="validate_button_text">Valider</string>
     <string name="time_picker_text">Heure</string>
     <string name="date_picker_text">Date</string>
+    <string name="save_data_file_key">save_data_file</string>
+    <string name="saved_first_name">first_name</string>
+    <string name="saved_family_name">family_name</string>
+    <string name="saved_email">email</string>
 </resources>

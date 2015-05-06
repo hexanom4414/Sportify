@@ -1,8 +1,10 @@
 package com.pld.h4414.sportify;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -123,8 +125,9 @@ public class ConnectionActivity extends Activity implements
             ((TextView)findViewById(R.id.email_text)).setText(Plus.AccountApi.getAccountName(mGoogleApiClient));
 
             // Register user
-            SportifyRestClient client = new SportifyRestClient();
-            client.registerUser(Plus.AccountApi.getAccountName(mGoogleApiClient), currentPerson.getName().getFamilyName(), currentPerson.getName().getGivenName());
+
+
+            saveUserInfo(Plus.AccountApi.getAccountName(mGoogleApiClient), currentPerson.getName().getFamilyName(), currentPerson.getName().getGivenName());
 
 
             new DownloadImageTask((ImageView) findViewById(R.id.personPhoto_image))
@@ -225,6 +228,18 @@ public class ConnectionActivity extends Activity implements
 
 
         }
+    }
+
+    private void saveUserInfo (String email, String family_name, String first_name){
+        Context context = getApplicationContext();
+        SharedPreferences sharedPref = context.getSharedPreferences(
+                getString(R.string.save_data_file_key), Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.saved_email), email);
+        editor.putString(getString(R.string.saved_first_name), first_name);
+        editor.putString(getString(R.string.saved_family_name), family_name);
+        editor.commit();
     }
 
 

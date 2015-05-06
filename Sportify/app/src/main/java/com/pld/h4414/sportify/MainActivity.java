@@ -21,7 +21,9 @@ import android.animation.AnimatorSet;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -143,25 +145,22 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public Fragment getItem(int i) {
             switch (i) {
 
+
+
                 case 0:
-
-                    return new FindFragment();
-
-
-                case 1:
 
 //                    return new GmapsFragment();
                     GmapsFragment mapFragment = new GmapsFragment();
                     return mapFragment.newInstance();
 
-                case 2:
+                case 1:
 
                     return new SportifyActionFragment();
 
-                case 3:
+                case 2:
                     return new FriendsFragment();
 
-                case 4:
+                case 3:
 
                     return new UserFragment();
 
@@ -175,7 +174,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -185,18 +184,17 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
         public int getPageIcon (int position) {
             switch (position) {
+
                 case 0:
-                    return R.drawable.ic_find;
-                case 1:
                     return R.drawable.ic_sportify;
-                case 2:
+                case 1:
                     return R.drawable.ic_add;
 
-                case 3:
+                case 2:
 
                     return R.drawable.ic_friends;
 
-                case 4:
+                case 3:
 
                     return R.drawable.ic_user;
 
@@ -256,12 +254,19 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-
+            String defaultValue ="";
 
         // Here retrieve the photo and the name of the user if he's connected
 
+            SharedPreferences sharedPref = getActivity().getSharedPreferences(
+                    getString(R.string.save_data_file_key), Context.MODE_PRIVATE);
+            String first_name = sharedPref.getString(getString(R.string.saved_first_name), defaultValue);
+            String family_name = sharedPref.getString(getString(R.string.saved_family_name), defaultValue);
 
-        // show his sports in the gridview
+            TextView text_name = (TextView)rootView.findViewById(R.id.name);
+            text_name.setText(first_name+" "+family_name);
+            // show his sports in the gridview
+
 
 
 
@@ -348,30 +353,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     }
 
-    /**
-     * A  fragment showing the find section
-     */
-    public static class FindFragment extends Fragment {
-
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_find, container, false);
-
-            //click listener of the buttons
-            /*rootView.findViewById(R.id.demo_external_activity)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                        }
-                    });*/
-            return rootView;
-        }
-
-
-    }
 
 
 

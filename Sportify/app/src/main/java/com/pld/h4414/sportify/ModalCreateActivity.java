@@ -3,6 +3,7 @@ package com.pld.h4414.sportify;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.DialogFragment;
@@ -12,9 +13,21 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -23,6 +36,42 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
     private static SportifyEvent event ;
 
+
+
+    /*
+
+    useful for wabservice
+
+    */
+
+    private static final String BASE_URL = "http://91.229.95.108:80";
+
+
+    // Make RESTful webservice call using AsyncHttpClient object
+    private static AsyncHttpClient client = new AsyncHttpClient();
+
+    private static String getAbsoluteUrl(String relativeUrl) {
+        return BASE_URL + relativeUrl;
+    }
+    private static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.get(getAbsoluteUrl(url), params ,responseHandler);
+    }
+
+    private static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.post(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+
+
+
+
+    /*
+
+    useful for wabservice
+
+    */
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,48 +79,274 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         event = new SportifyEvent();
 
-        Spinner spinner_sport = (Spinner) findViewById(R.id.sportPicker);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter_sport = ArrayAdapter.createFromResource(this,
-                R.array.sport_array, android.R.layout.simple_spinner_item);
+        // Call webservices to populate the spinners
 
+        this.getSportsWebServiceInvocation(new RequestParams(), "/fetch/sport");
+        this.getLocationWebServiceInvocation(new RequestParams(), "/fetch/installation_sportive");
 
-        //to replace by :
-        //
-        SportifyRestClient client = new SportifyRestClient();
-
-        //ArrayAdapter<String> adapter_sport = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,client.listSports());
-        //adapter_sport.setDropDownViewResource(android.R.layout.simple_spinner_item);
-
-
-    // Apply the adapter to the spinner
-        spinner_sport.setAdapter(adapter_sport);
-        System.out.println(client.listSports());
-
-
-
-        Spinner spinner_location = (Spinner) findViewById(R.id.locationPicker);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter_location = ArrayAdapter.createFromResource(this,
-                R.array.location_array, android.R.layout.simple_spinner_item);
-
-
-        //to replace by :
-
-      //  adapter_sport.addAll(client.listLocations()); // Add all the list of sport fields from the server to the adapter
-
-
-    // Apply the adapter to the spinner
-        spinner_location.setAdapter(adapter_location);
     }
 
 
+
+
+    /**
+     * Method that performs RESTful webservice invocations
+     *
+     * @param params
+     * @param suffixe
+     *
+     */
+    private void getSportsWebServiceInvocation(RequestParams params, String suffixe){
+        // Show Progress Dialog
+
+
+
+        this.get(suffixe, params, new JsonHttpResponseHandler(){
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+
+                try {
+                    // JSON Object
+                    // When the JSON response has status boolean value assigned with true
+                    if(response.getString("success") == "true"){
+                        JSONArray array =  response.getJSONArray("data");
+                        ArrayList<String> sport_list = new  ArrayList<String>() ;
+
+
+                        try {
+
+
+
+                            for (int i = 0; i < array.length(); i++) {
+
+                                sport_list.add(array.getJSONObject(i).getString("nom").toString());
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        ArrayAdapter<String> adapter_sport = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style,sport_list);
+
+
+                        Spinner spinner_sport = (Spinner) findViewById(R.id.sportPicker);
+
+
+                        spinner_sport.setAdapter(adapter_sport);
+
+                        System.out.println(sport_list.toString());
+                    }
+                    // Else display error message
+                    else{
+                        //gestion erreur
+
+                        System.out.println("erreur");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    System.out.println( "Error Occurred [Server's JSON response might be invalid]!");
+                    e.printStackTrace();
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+                System.out.println("failure");
+
+            }
+
+            @Override
+            public void onFinish() {
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+        });
+
+
+
+    }
+
+    private void getLocationWebServiceInvocation(RequestParams params, String suffixe) {
+        // Show Progress Dialog
+
+
+        this.get(suffixe, params, new JsonHttpResponseHandler() {
+
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+
+                try {
+                    // JSON Object
+                    // When the JSON response has status boolean value assigned with true
+                    if (response.getString("success") == "true") {
+                        JSONArray array = response.getJSONArray("data");
+                        ArrayList<String> location_list = new ArrayList<String>();
+
+
+                        try {
+
+
+                            for (int i = 0; i < array.length(); i++) {
+
+                                location_list.add(array.getJSONObject(i).getString("nom").toString());
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style, location_list);
+
+
+                        Spinner spinner = (Spinner) findViewById(R.id.locationPicker);
+
+
+                        spinner.setAdapter(adapter);
+
+                        System.out.println(location_list.toString());
+                    }
+                    // Else display error message
+                    else {
+                        //gestion erreur
+
+                        System.out.println("erreur");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+                System.out.println("failure");
+
+            }
+
+            @Override
+            public void onFinish() {
+
+
+            }
+
+            @Override
+            public void onStart() {
+
+            }
+        });
+    }
+
+
+    private void postEventWebServiceInvocation(RequestParams params, String suffixe){
+
+
+        this.post(suffixe, params, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+
+                try {
+                    // JSON Object
+                    // When the JSON response has status boolean value assigned with true
+                    if (response.getString("success") == "true") {
+
+                    Toast.makeText(getApplicationContext(),"Evènement créé avec succès",Toast.LENGTH_LONG).show();
+
+                    }
+                    // Else display error message
+                    else {
+                        //gestion erreur
+
+                        System.out.println("erreur");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+                System.out.println("Erreur lors de la création de l'évènement");
+
+            }
+        });
+
+
+    }
+
+    private void postUserWebServiceInvocation(RequestParams params, String suffixe){
+
+
+        this.post(suffixe, params, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+
+                try {
+                    // JSON Object
+                    // When the JSON response has status boolean value assigned with true
+                    if (response.getString("success") == "true") {
+
+                        Toast.makeText(getApplicationContext(),"Utilisateur créé avec succès",Toast.LENGTH_LONG).show();
+
+                    }
+                    // Else display error message
+                    else {
+                        //gestion erreur
+
+                        System.out.println("erreur");
+                    }
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+
+                }
+
+
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                super.onFailure(e, errorResponse);
+                System.out.println("Erreur lors de la création de l'utilisateur");
+
+            }
+        });
+
+
+    }
 
     //listener for spinner
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
+
+
+        ((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
 
         if (parent.getId() == R.id.sportPicker){
 
@@ -173,8 +448,13 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         // Here we call the createEvent Method
 
         //SportifyRestClient client = new SportifyRestClient();
+        RequestParams params = new RequestParams();
 
+       // params.put("",);
+       // params.put("",);
+       // params.put("",);
 
+        this.postEventWebServiceInvocation(params, "/fetch/sport");
         Toast.makeText(getApplicationContext(), event+"",Toast.LENGTH_LONG).show();
 
     }
