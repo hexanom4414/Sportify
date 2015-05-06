@@ -1,20 +1,10 @@
     package com.pld.h4414.sportify;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -26,8 +16,6 @@ import com.loopj.android.http.RequestParams;
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 
 /*
@@ -185,7 +173,7 @@ public class ConnectionActivity extends Activity implements
         if(mGoogleApiClient.isConnected()) {
             Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-            Intent intent = new Intent(this, MainActivity.class);
+            Intent intent = new Intent(this, ViewPagerActivity.class);
 
             if (currentPerson != null) {
                 intent.putExtra("validPerson", true);

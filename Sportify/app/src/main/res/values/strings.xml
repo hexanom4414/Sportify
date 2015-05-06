@@ -28,6 +28,7 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="app_label">@string/app_name</string>
     <string name="title_activity_modal_filter">ModalFilterActivity</string>
     <string name="title_activity_friends_details">FriendsDetailsActivity</string>
     <string name="title_activity_modal_sport_detail">ModalSportDetailActivity</string>
@@ -38,4 +39,9 @@
     <string name="saved_first_name">first_name</string>
     <string name="saved_family_name">family_name</string>
     <string name="saved_email">email</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="search_hint">Rechercher (terrains,matches,tournoi...)</string>
+    <string name="action_search">Rechercher</string>
+    <string name="action_switch_carte">Carte</string>
+    <string name="action_switch_list">Liste</string>
 </resources>
