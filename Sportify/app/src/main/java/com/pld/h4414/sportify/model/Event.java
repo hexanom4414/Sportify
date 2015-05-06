@@ -11,7 +11,7 @@ public class Event {
     int _id;
     int _installation;
     int _sport;
-    String _date;
+    Date _date;
 
     // empty constructor
     public Event(){
@@ -19,7 +19,7 @@ public class Event {
     }
 
     // constructor
-    public Event(int id, int installation, int sport, String date){
+    public Event(int id, int installation, int sport, Date date){
         this._id = id;
         this._installation = installation;
         this._sport = sport;
@@ -29,7 +29,7 @@ public class Event {
     }
 
     // constructor
-    public Event(int installation, int sport, String date){
+    public Event(int installation, int sport, Date date){
         this._installation = installation;
         this._sport = sport;
         this._date = date;
@@ -53,11 +53,11 @@ public class Event {
         this._installation = _installation;
     }
 
-    public String get_date() {
+    public Date get_date() {
         return _date;
     }
 
-    public void set_date(String _date) {
+    public void set_date(Date _date) {
         this._date = _date;
     }
 

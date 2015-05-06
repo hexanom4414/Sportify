@@ -34,42 +34,9 @@ import java.util.Date;
 
 public class ModalCreateActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener {
 
-    private static SportifyEvent event ;
+   // private static SportifyEvent event ;
 
 
-
-    /*
-
-    useful for wabservice
-
-    */
-
-    private static final String BASE_URL = "http://91.229.95.108:80";
-
-
-    // Make RESTful webservice call using AsyncHttpClient object
-    private static AsyncHttpClient client = new AsyncHttpClient();
-
-    private static String getAbsoluteUrl(String relativeUrl) {
-        return BASE_URL + relativeUrl;
-    }
-    private static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.get(getAbsoluteUrl(url), params ,responseHandler);
-    }
-
-    private static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-        client.post(getAbsoluteUrl(url), params, responseHandler);
-    }
-
-
-
-
-
-    /*
-
-    useful for wabservice
-
-    */
 
 
     @Override
@@ -77,7 +44,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modal_create);
 
-        event = new SportifyEvent();
+     //   event = new SportifyEvent();
 
         // Call webservices to populate the spinners
 
@@ -99,80 +66,9 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
     private void getSportsWebServiceInvocation(RequestParams params, String suffixe){
         // Show Progress Dialog
 
-
-
-        this.get(suffixe, params, new JsonHttpResponseHandler(){
-
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-
-                try {
-                    // JSON Object
-                    // When the JSON response has status boolean value assigned with true
-                    if(response.getString("success") == "true"){
-                        JSONArray array =  response.getJSONArray("data");
-                        ArrayList<String> sport_list = new  ArrayList<String>() ;
-
-
-                        try {
-
-
-
-                            for (int i = 0; i < array.length(); i++) {
-
-                                sport_list.add(array.getJSONObject(i).getString("nom").toString());
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        ArrayAdapter<String> adapter_sport = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style,sport_list);
-
-
-                        Spinner spinner_sport = (Spinner) findViewById(R.id.sportPicker);
-
-
-                        spinner_sport.setAdapter(adapter_sport);
-
-                        System.out.println(sport_list.toString());
-                    }
-                    // Else display error message
-                    else{
-                        //gestion erreur
-
-                        System.out.println("erreur");
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    System.out.println( "Error Occurred [Server's JSON response might be invalid]!");
-                    e.printStackTrace();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                super.onFailure(e, errorResponse);
-                System.out.println("failure");
-
-            }
-
-            @Override
-            public void onFinish() {
-
-
-            }
-
-            @Override
-            public void onStart() {
-
-            }
-        });
+        SportifyRestClient client = new SportifyRestClient();
+        JsonHttpResponseHandlerGetSports handler = new JsonHttpResponseHandlerGetSports();
+        client.getWebServiceInvocation( params,suffixe, handler);
 
 
 
@@ -181,163 +77,240 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
     private void getLocationWebServiceInvocation(RequestParams params, String suffixe) {
         // Show Progress Dialog
 
-
-        this.get(suffixe, params, new JsonHttpResponseHandler() {
-
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-
-                try {
-                    // JSON Object
-                    // When the JSON response has status boolean value assigned with true
-                    if (response.getString("success") == "true") {
-                        JSONArray array = response.getJSONArray("data");
-                        ArrayList<String> location_list = new ArrayList<String>();
-
-
-                        try {
-
-
-                            for (int i = 0; i < array.length(); i++) {
-
-                                location_list.add(array.getJSONObject(i).getString("nom").toString());
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style, location_list);
-
-
-                        Spinner spinner = (Spinner) findViewById(R.id.locationPicker);
-
-
-                        spinner.setAdapter(adapter);
-
-                        System.out.println(location_list.toString());
-                    }
-                    // Else display error message
-                    else {
-                        //gestion erreur
-
-                        System.out.println("erreur");
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                super.onFailure(e, errorResponse);
-                System.out.println("failure");
-
-            }
-
-            @Override
-            public void onFinish() {
-
-
-            }
-
-            @Override
-            public void onStart() {
-
-            }
-        });
+        SportifyRestClient client = new SportifyRestClient();
+        JsonHttpResponseHandlerGetLocation handler = new JsonHttpResponseHandlerGetLocation();
+        client.getWebServiceInvocation( params,suffixe ,handler );
     }
 
 
     private void postEventWebServiceInvocation(RequestParams params, String suffixe){
 
 
-        this.post(suffixe, params, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
 
-                try {
-                    // JSON Object
-                    // When the JSON response has status boolean value assigned with true
-                    if (response.getString("success") == "true") {
-
-                    Toast.makeText(getApplicationContext(),"Evènement créé avec succès",Toast.LENGTH_LONG).show();
-
-                    }
-                    // Else display error message
-                    else {
-                        //gestion erreur
-
-                        System.out.println("erreur");
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                super.onFailure(e, errorResponse);
-                System.out.println("Erreur lors de la création de l'évènement");
-
-            }
-        });
+        SportifyRestClient client = new SportifyRestClient();
+        JsonHttpResponseHandlerPost handler = new JsonHttpResponseHandlerPost();
+        handler.setMessage_erreur("Erreur lors de la création de l'évènement");
+        handler.setMessage_succes("Evènement créé");
+        client.postWebServiceInvocation( params,suffixe , handler);
 
 
     }
 
     private void postUserWebServiceInvocation(RequestParams params, String suffixe){
 
+        SportifyRestClient client = new SportifyRestClient();
 
-        this.post(suffixe, params, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                // If the response is JSONObject instead of expected JSONArray
-
-                try {
-                    // JSON Object
-                    // When the JSON response has status boolean value assigned with true
-                    if (response.getString("success") == "true") {
-
-                        Toast.makeText(getApplicationContext(),"Utilisateur créé avec succès",Toast.LENGTH_LONG).show();
-
-                    }
-                    // Else display error message
-                    else {
-                        //gestion erreur
-
-                        System.out.println("erreur");
-                    }
-                } catch (JSONException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                super.onFailure(e, errorResponse);
-                System.out.println("Erreur lors de la création de l'utilisateur");
-
-            }
-        });
+        JsonHttpResponseHandlerPost handler = new JsonHttpResponseHandlerPost();
+        handler.setMessage_erreur("");
+        handler.setMessage_succes("");
+        client.postWebServiceInvocation( params, suffixe,handler);
 
 
     }
+
+    public class JsonHttpResponseHandlerGetSports extends com.loopj.android.http.JsonHttpResponseHandler{
+
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            // If the response is JSONObject instead of expected JSONArray
+
+            try {
+                // JSON Object
+                // When the JSON response has status boolean value assigned with true
+                if(response.getString("success") == "true"){
+                    JSONArray array =  response.getJSONArray("data");
+                    ArrayList<String> sport_list = new  ArrayList<String>() ;
+
+
+                    try {
+
+
+
+                        for (int i = 0; i < array.length(); i++) {
+
+                            sport_list.add(array.getJSONObject(i).getString("nom").toString());
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayAdapter<String> adapter_sport = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style,sport_list);
+
+
+                    Spinner spinner_sport = (Spinner) findViewById(R.id.sportPicker);
+
+
+                    spinner_sport.setAdapter(adapter_sport);
+
+                    System.out.println(sport_list.toString());
+                }
+                // Else display error message_succes
+                else{
+                    //gestion erreur
+
+                    System.out.println("erreur");
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                System.out.println( "Error Occurred [Server's JSON response might be invalid]!");
+                e.printStackTrace();
+
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable e, JSONObject errorResponse) {
+            super.onFailure(e, errorResponse);
+            System.out.println("failure");
+
+        }
+
+        @Override
+        public void onFinish() {
+
+
+        }
+
+        @Override
+        public void onStart() {
+
+        }
+    }
+
+
+    public class JsonHttpResponseHandlerGetLocation extends com.loopj.android.http.JsonHttpResponseHandler {
+
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            // If the response is JSONObject instead of expected JSONArray
+
+            try {
+                // JSON Object
+                // When the JSON response has status boolean value assigned with true
+                if (response.getString("success") == "true") {
+                    JSONArray array = response.getJSONArray("data");
+                    ArrayList<String> location_list = new ArrayList<String>();
+
+
+                    try {
+
+
+                        for (int i = 0; i < array.length(); i++) {
+
+                            location_list.add(array.getJSONObject(i).getString("nom").toString());
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.my_spinner_style, location_list);
+
+
+                    Spinner spinner = (Spinner) findViewById(R.id.locationPicker);
+
+
+                    spinner.setAdapter(adapter);
+
+                    System.out.println(location_list.toString());
+                }
+                // Else display error message_succes
+                else {
+                    //gestion erreur
+
+                    System.out.println("erreur");
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable e, JSONObject errorResponse) {
+            super.onFailure(e, errorResponse);
+            System.out.println("failure");
+
+        }
+
+        @Override
+        public void onFinish() {
+
+
+        }
+
+        @Override
+        public void onStart() {
+
+        }
+    }
+
+   public class JsonHttpResponseHandlerPost extends com.loopj.android.http.JsonHttpResponseHandler{
+        private String message_succes;
+       private String message_erreur;
+
+
+       @Override
+        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            // If the response is JSONObject instead of expected JSONArray
+
+            try {
+                // JSON Object
+                // When the JSON response has status boolean value assigned with true
+                if (response.getString("success") == "true") {
+
+                    Toast.makeText(getApplicationContext(), message_succes,Toast.LENGTH_LONG).show();
+
+                }
+                // Else display error message_succes
+                else {
+                    //gestion erreur
+
+                    System.out.println("erreur");
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable e, JSONObject errorResponse) {
+            super.onFailure(e, errorResponse);
+            Toast.makeText(getApplicationContext(), message_erreur,Toast.LENGTH_LONG).show();
+
+
+        }
+
+       public String getMessage_succes() {
+           return message_succes;
+       }
+
+       public void setMessage_succes(String message_succes) {
+           this.message_succes = message_succes;
+       }
+
+       public String getMessage_erreur() {
+           return message_erreur;
+       }
+
+       public void setMessage_erreur(String message_erreur) {
+           this.message_erreur = message_erreur;
+       }
+   }
+
+
 
     //listener for spinner
 
@@ -353,14 +326,14 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
             Toast.makeText(getApplicationContext(),"coucou",Toast.LENGTH_LONG).show();
 
 
-            event.setSport((String)parent.getItemAtPosition(position));
+           // event.setSport((String)parent.getItemAtPosition(position));
 
        }else if(parent.getId() == R.id.locationPicker){
 
 
             Toast.makeText(getApplicationContext(),"je suis là",Toast.LENGTH_LONG).show();
 
-            event.setLocation((String)parent.getItemAtPosition(position));
+           // event.setLocation((String)parent.getItemAtPosition(position));
 
        }
 
@@ -410,7 +383,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             // Do something with the time chosen by the user
-        event.setTime(hourOfDay, minute);
+       // event.setTime(hourOfDay, minute);
 
         }
     }
@@ -433,7 +406,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
 
-            event.setDate(new Date(year,month,day));
+          //  event.setDate(new Date(year,month,day));
 
 
         }
@@ -447,7 +420,6 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         // Here we call the createEvent Method
 
-        //SportifyRestClient client = new SportifyRestClient();
         RequestParams params = new RequestParams();
 
        // params.put("",);
@@ -455,77 +427,11 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
        // params.put("",);
 
         this.postEventWebServiceInvocation(params, "/fetch/sport");
-        Toast.makeText(getApplicationContext(), event+"",Toast.LENGTH_LONG).show();
+      //  Toast.makeText(getApplicationContext(), event+"",Toast.LENGTH_LONG).show();
 
     }
 
-    public class SportifyEvent{
 
-        private String sport;
-        private Date date;
-        private Date time;
-        private String location;
-        private String userEmail;
-
-
-        SportifyEvent(){
-
-        }
-
-
-        SportifyEvent(String s, Date d, String l,String u ){
-            sport = s;
-            date = d;
-            location = l;
-            userEmail = u;
-
-        }
-
-        @Override
-        public String toString() {
-            return "Username: "+ userEmail+" Sport : " +sport+ " le : "+date.toString()+" à "+ time.getHours()+":"+time.getMinutes()+" à "+location;
-        }
-
-        public String getSport() {
-            return sport;
-        }
-
-        public void setSport(String sport) {
-            this.sport = sport;
-        }
-
-        public Date getDate() {
-            return date;
-        }
-
-        public void setDate(Date date) {
-            this.date = date;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-        public String getUserEmail() {
-            return userEmail;
-        }
-
-        public void setUserEmail(String userEmail) {
-            this.userEmail = userEmail;
-        }
-
-        public Date getTime() {
-            return time;
-        }
-
-        public void setTime(int hours, int minutes) {
-            this.time = new Date(0,0,0,hours,minutes);
-        }
-    }
 
 
 

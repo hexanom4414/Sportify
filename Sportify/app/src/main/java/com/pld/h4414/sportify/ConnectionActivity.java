@@ -21,6 +21,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.loopj.android.http.RequestParams;
 
 import java.io.InputStream;
 
@@ -240,6 +241,43 @@ public class ConnectionActivity extends Activity implements
         editor.commit();
 
         System.out.println(sharedPref.getString("first_name", ""));
+    }
+    public boolean registerUser(String email, String familyName, String firstName){
+
+        boolean result = false;
+
+        //If user doesn't exists create it
+        RequestParams params = new RequestParams();
+
+
+        if (familyName != null && firstName != null && email !=null) {
+
+
+            // Put Http parameter username
+            // params.put("username", email);
+            // Put Http parameter lastname
+            params.put("email", email);
+
+
+            params.put("nom", familyName);
+
+            // Put Http parameter firstname
+
+            params.put("prenom", firstName);
+
+            // Invoke RESTful Web Service with Http parameters
+
+
+
+
+        }
+
+
+
+
+
+        return result;
+
     }
 
 
