@@ -21,6 +21,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.loopj.android.http.RequestParams;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.InputStream;
 
@@ -117,6 +122,17 @@ public class ConnectionActivity extends Activity implements
         mSignInClicked = false;
         Toast.makeText(this, "User is connected!", Toast.LENGTH_LONG).show();
 
+        // create user on the server
+
+        RequestParams params = new RequestParams();
+        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+        params.put("nom", currentPerson.getName().getFamilyName());
+        params.put("prenom", currentPerson.getName().getGivenName());
+        params.put("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
+
+        this.postUserWebServiceInvocation(params,"/utilisateur");
+
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) == null) {
             System.err.println("Null person");
         }
@@ -177,6 +193,8 @@ public class ConnectionActivity extends Activity implements
                 intent.putExtra("givenName", currentPerson.getName().getGivenName());
                 intent.putExtra("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
                 intent.putExtra("urlImage", currentPerson.getImage().getUrl());
+
+
             } else {
                 intent.putExtra("validPerson", false);
             }
@@ -188,5 +206,74 @@ public class ConnectionActivity extends Activity implements
             Toast.makeText(this, "Please connect", Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private void postUserWebServiceInvocation(RequestParams params, String suffixe){
+
+        SportifyRestClient client = new SportifyRestClient();
+
+        JsonHttpResponseHandlerPost handler = new JsonHttpResponseHandlerPost();
+        handler.setMessage_erreur("Erreur lors de la création de l'utilisateur");
+        handler.setMessage_succes("Utilisateur créé");
+        client.postWebServiceInvocation( params, suffixe,handler);
+
+
+    }
+
+    public class JsonHttpResponseHandlerPost extends com.loopj.android.http.JsonHttpResponseHandler{
+        private String message_succes;
+        private String message_erreur;
+
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+            // If the response is JSONObject instead of expected JSONArray
+
+            try {
+                // JSON Object
+                // When the JSON response has status boolean value assigned with true
+                if (response.getString("success") == "true") {
+
+                    Toast.makeText(getApplicationContext(), message_succes,Toast.LENGTH_LONG).show();
+
+                }
+                // Else display error message_succes
+                else {
+                    //gestion erreur
+
+                    System.out.println("erreur");
+                }
+            } catch (JSONException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+
+            }
+
+
+        }
+
+        @Override
+        public void onFailure(Throwable e, JSONObject errorResponse) {
+            super.onFailure(e, errorResponse);
+            Toast.makeText(getApplicationContext(), message_erreur,Toast.LENGTH_LONG).show();
+
+
+        }
+
+        public String getMessage_succes() {
+            return message_succes;
+        }
+
+        public void setMessage_succes(String message_succes) {
+            this.message_succes = message_succes;
+        }
+
+        public String getMessage_erreur() {
+            return message_erreur;
+        }
+
+        public void setMessage_erreur(String message_erreur) {
+            this.message_erreur = message_erreur;
+        }
     }
 }

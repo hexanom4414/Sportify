@@ -9,8 +9,8 @@ import java.util.Date;
 public class Event {
 
     int _id;
-    String _installation;
-    String _sport;
+    int _installation;
+    int _sport;
     Date _date;
     String _email_user;
 
@@ -20,7 +20,7 @@ public class Event {
     }
 
     // constructor
-    public Event(int id, String installation, String sport, Date date){
+    public Event(int id, int installation, int sport, Date date){
         this._id = id;
         this._installation = installation;
         this._sport = sport;
@@ -30,7 +30,7 @@ public class Event {
     }
 
     // constructor
-    public Event(String installation, String sport, Date date){
+    public Event(int installation, int sport, Date date){
         this._installation = installation;
         this._sport = sport;
         this._date = date;
@@ -46,11 +46,11 @@ public class Event {
         this._id = _id;
     }
 
-    public String get_installation() {
+    public int get_installation() {
         return _installation;
     }
 
-    public void set_installation(String _installation) {
+    public void set_installation(int _installation) {
         this._installation = _installation;
     }
 
@@ -67,16 +67,16 @@ public class Event {
         this._date = _date;
     }
 
-    public String get_sport() {
+    public int get_sport() {
         return _sport;
     }
 
-    public void set_sport(String _sport) {
+    public void set_sport(int _sport) {
         this._sport = _sport;
     }
 
     public String get_email_user() {
-        return _sport;
+        return _email_user;
     }
 
     public void set_email_user(String _email_user) {

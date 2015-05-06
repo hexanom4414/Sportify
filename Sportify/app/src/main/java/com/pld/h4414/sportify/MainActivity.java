@@ -49,7 +49,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.io.InputStream;
 
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -135,6 +135,21 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
     }
 
     /**
@@ -267,7 +282,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             {
                 String first_name = intent.getStringExtra("givenName");
                 String family_name = intent.getStringExtra("familyName");
-                String email = intent.getStringExtra("email");
                 String imgUrl = intent.getStringExtra("urlImage");
 
                 // show his sports in the gridview
@@ -315,7 +329,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+        public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             final View rootView = inflater.inflate(R.layout.fragment_sportify_action, container, false);
             View createButton = rootView.findViewById(R.id.createEventButton);
@@ -340,8 +354,13 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
                             //transition to another activity here
+                            Intent oldIntent = getActivity().getIntent();
 
+                            String email = oldIntent.getStringExtra("email");
                             Intent intent = new Intent(getActivity(),ModalCreateActivity.class);
+
+                            intent.putExtra("email",email);
+
                             startActivity(intent);
                         }
                     });

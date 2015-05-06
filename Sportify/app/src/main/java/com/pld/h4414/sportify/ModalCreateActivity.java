@@ -3,7 +3,7 @@ package com.pld.h4414.sportify;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.DialogFragment;
@@ -13,14 +13,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.pld.h4414.sportify.model.Event;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
@@ -31,12 +27,19 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ModalCreateActivity extends FragmentActivity implements AdapterView.OnItemSelectedListener {
 
 
     private static Event event;
+    private static Map<String,Integer> mapLocation = new HashMap<String,Integer>();
+    private static Map<String,Integer> mapSport = new HashMap<String,Integer>();
+    private static boolean isReallySelectedSport = false;
+    private static boolean isReallySelectedLocation = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,17 +106,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
     }
 
-    private void postUserWebServiceInvocation(RequestParams params, String suffixe){
 
-        SportifyRestClient client = new SportifyRestClient();
-
-        JsonHttpResponseHandlerPost handler = new JsonHttpResponseHandlerPost();
-        handler.setMessage_erreur("");
-        handler.setMessage_succes("");
-        client.postWebServiceInvocation( params, suffixe,handler);
-
-
-    }
 
     public class JsonHttpResponseHandlerGetSports extends com.loopj.android.http.JsonHttpResponseHandler{
 
@@ -136,8 +129,13 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
                         for (int i = 0; i < array.length(); i++) {
 
-                            sport_list.add(array.getJSONObject(i).getString("nom").toString());
+                            sport_list.add(array.getJSONObject(i).getString("nom"));
+
+                            mapSport.put( array.getJSONObject(i).getString("nom"), Integer.parseInt(array.getJSONObject(i).getString("id")));
+
+
                         }
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -203,14 +201,17 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
                     JSONArray array = response.getJSONArray("data");
                     ArrayList<String> location_list = new ArrayList<String>();
 
-
                     try {
 
 
                         for (int i = 0; i < array.length(); i++) {
 
-                            location_list.add(array.getJSONObject(i).getString("nom").toString());
+                            location_list.add(array.getJSONObject(i).getString("nom"));
+                            mapLocation.put(array.getJSONObject(i).getString("nom"), Integer.parseInt(array.getJSONObject(i).getString("id")));
+
                         }
+
+
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -331,18 +332,34 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
 
 
-            event.set_sport((String) parent.getItemAtPosition(position));
-
-            String suffixe = "/fetch/installation_sportive?filter=sport";
-
-            suffixe = suffixe + "&arg=" + event.get_sport() ;
-            this.getLocationWebServiceInvocation(new RequestParams(), suffixe);
-
-       }else if(parent.getId() == R.id.locationPicker){
+            if (isReallySelectedSport){
 
 
-            event.set_installation((String) parent.getItemAtPosition(position));
 
+                System.out.println(mapSport.get((String) parent.getItemAtPosition(position)));
+                //event.set_sport();
+
+
+                String suffixe = "/fetch/installation_sportive?filter=sport";
+
+                suffixe = suffixe + "&arg=" + event.get_sport() ;
+                this.getLocationWebServiceInvocation(new RequestParams(), suffixe);
+            }
+            isReallySelectedSport = true;
+
+
+
+        }else if(parent.getId() == R.id.locationPicker){
+
+
+            if (isReallySelectedLocation) {
+
+                event.set_installation(mapLocation.get((String) parent.getItemAtPosition(position)));
+
+
+            }
+
+            isReallySelectedLocation = true;
        }
 
     }
@@ -441,6 +458,10 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
         // Here we call the createEvent Method
 
         RequestParams params = new RequestParams();
+
+        Intent intent = getIntent();
+
+        String email = intent.getStringExtra("email");
 
         params.put("date_evenement", event.get_date());
         params.put("installation_sportive", event.get_installation());
