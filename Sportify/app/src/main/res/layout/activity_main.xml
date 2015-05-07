@@ -18,18 +18,21 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/join_button_text"
-        android:id="@+id/buttonJoin"
+        android:text="Profil"
+        android:id="@+id/button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="45dp"
+        android:layout_marginRight="100dp"
+        />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_button_text"
         android:id="@+id/buttonCreate"
-        android:layout_above="@+id/buttonJoin"
+        android:layout_above="@+id/button"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="45dp" />
@@ -37,11 +40,11 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="New Button"
-        android:id="@+id/button4"
+        android:text="@string/join_button_text"
+        android:id="@+id/buttonJoin"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/buttonJoin"
-        android:layout_toStartOf="@+id/buttonJoin"
+        android:layout_toLeftOf="@+id/button"
+        android:layout_toStartOf="@+id/button"
         android:layout_marginRight="80dp"
         android:layout_marginEnd="79dp" />
 
