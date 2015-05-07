@@ -259,7 +259,7 @@ public class ConnectionActivity extends Activity implements
         @Override
         public void onFailure(Throwable e, JSONObject errorResponse) {
             super.onFailure(e, errorResponse);
-            Toast.makeText(getApplicationContext(), message_erreur,Toast.LENGTH_LONG).show();
+           // Toast.makeText(getApplicationContext(), message_erreur,Toast.LENGTH_LONG).show();
 
 
         }

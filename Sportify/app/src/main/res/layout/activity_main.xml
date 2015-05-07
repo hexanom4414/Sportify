@@ -23,8 +23,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginBottom="45dp"
-        android:layout_marginRight="100dp"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="80dp"
         android:onClick="launchProfilePage" />
 
     <Button
@@ -45,7 +45,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/buttonProfile"
         android:layout_toStartOf="@+id/buttonProfile"
-        android:layout_marginRight="80dp"
+        android:layout_marginRight="40dp"
         android:layout_marginEnd="79dp" />
 
 </RelativeLayout>

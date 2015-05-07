@@ -67,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
     private MenuItem searchItem;
     private ProgressDialog mProgressDialog;
     ArrayList<String> mListResult = new ArrayList<String>();
+    ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
+
     static final int CODE_SPORT = 1;  // The request code
     public int sport_global = 0;
 
@@ -77,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        //getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.activity_main);
 
 
@@ -222,7 +224,6 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 
 
-                ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
                 // If the response is JSONObject instead of expected JSONArray
                 mProgressDialog.dismiss();
                 ArrayList<String> mListResult = new ArrayList<String>();
@@ -248,9 +249,9 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                 searchItem.collapseActionView();
 
                 ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
-                System.out.println(mListResult.size());
                 mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
                         R.layout.results_list_item, mListResult));
+                mResultsList.setBackgroundColor(Color.BLACK);
             }
         });
 
@@ -269,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                 Intent intent = new Intent(getApplicationContext(), ModalFilterActivity.class);
 
                 startActivityForResult(intent, CODE_SPORT);
-                return false;
+                return true;
             }
         });
         // Get the SearchView and set the searchable configuration
@@ -280,11 +281,11 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         mSearchView.setOnSearchClickListener(new View.OnClickListener() {    //open (replace) the fragment for choosing the type of search. Here : Terrain, Evenement
             @Override
             public void onClick(View v) {
-               /* Fragment fragment = new SearchOptionsFragment();
+                Fragment fragment = new SearchOptionsFragment();
                 // Insert the fragment by replacing any existing fragment
                 fragmentManager.beginTransaction()
                         .replace(R.id.container, fragment)
-                        .commit();*/
+                        .commit();
 
 
 
@@ -307,16 +308,16 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             }
         });
 
-//        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                if (hasFocus) {
-//                    Toast.makeText(getApplicationContext(),"hello results"  , Toast.LENGTH_LONG).show();
-//                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
-//                }
-//            }
-//        });
+        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    Toast.makeText(getApplicationContext(),"hello results"  , Toast.LENGTH_LONG).show();
+                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
+            }
+        });
         mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean hasFocus) {
@@ -423,8 +424,10 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
 
 
-        ArrayList<InstallationSportive> list_installations = new ArrayList<>();
-        for (InstallationSportive ins : list_installations){
+
+
+        System.out.println(mResult.size());
+        for (InstallationSportive ins : mResult){
             mMap.addMarker(new MarkerOptions()
                     .position(new LatLng(ins.get_latitude(), ins.get_longitude()))
                     .title(ins.get_nom())
