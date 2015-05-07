@@ -1,7 +1,5 @@
 package com.pld.h4414.sportify;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;
@@ -10,21 +8,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
 
-import com.pld.h4414.sportify.model.InstallationSportive;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -32,6 +27,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.pld.h4414.sportify.model.InstallationSportive;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
     private String mTypeSearch;
     private android.support.v7.widget.SearchView mSearchView;
     private MenuItem searchItem;
-    private ProgressDialog mProgressDialog;
+//    private ProgressDialog mProgressDialog;
 
 
     @Override
@@ -89,8 +85,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                 String typeSearch = appData.getString("type_search");
                 query = typeSearch + query;
             }
-            mProgressDialog = ProgressDialog.show(this, null,
-                    "recherche de terrains..", true);
+
             invokeWS();
         }
     }
@@ -99,13 +94,12 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         SportifyRestClient client = new SportifyRestClient();
 
         client.get("/fetch/installation_sportive", null, new JsonHttpResponseHandler() {
-
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+
                 ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
                 ArrayList<String> mListResult = new ArrayList<String>();
-                // If the response is JSONObject instead of expected JSONArray
-                mProgressDialog.dismiss();
 
                 try {
                     if (response.getBoolean("success")) {
@@ -169,6 +163,27 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             public boolean onQueryTextChange(String newText) {
                 // ...
                 return true;
+            }
+        });
+
+//        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    Toast.makeText(getApplicationContext(),"hello results"  , Toast.LENGTH_LONG).show();
+//                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                }
+//            }
+//        });
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    Toast.makeText(getApplicationContext(),"hello results"  , Toast.LENGTH_LONG).show();
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
             }
         });
         mSearchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
@@ -258,6 +273,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
     @Override
     public void onMapReady(GoogleMap map) {
+
         LatLng LYON = new LatLng(45.750000, 4.850000);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(LYON, 15));
         map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
@@ -271,27 +287,17 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         // We're adding the first option type_search selected and send it also to the searchableActivity
         Bundle appData = new Bundle();
         appData.putString("type_search", mTypeSearch);
-        Log.v("hello reserchresults", "hello results");
         startSearch(null, false, appData, false);
-        mProgressDialog.show();
+//        mProgressDialog.show();
         return true;
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.v("hello results","hello results");
-//        if( resultCode==1 ) {
-//            Toast.makeText(getApplicationContext(),"hello results" + data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS) , Toast.LENGTH_LONG).show();
-//            String[] mSearchResults = data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS);
-//            // Set the adapter for the list view
-//            ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
-//            mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
-//                    R.layout.results_list_item, mSearchResults));
-//
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+
+        super.onActivityResult(requestCode, resultCode, data);
+    }
     /**
      * A fragment representing the front of the card.
      */
@@ -299,7 +305,8 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_card_results_list, container, false);
+
+                return inflater.inflate(R.layout.fragment_card_results_list, container, false);
         }
     }
 
