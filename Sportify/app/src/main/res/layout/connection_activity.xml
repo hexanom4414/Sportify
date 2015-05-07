@@ -8,17 +8,18 @@
         android:layout_height="wrap_content"
         android:text="Sign out"
         android:id="@+id/sign_out_button"
-        android:layout_below="@+id/sign_in_button"
-        android:layout_marginTop="61dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerVertical="true"
+        android:layout_alignRight="@+id/buttonProfile"
+        android:layout_alignEnd="@+id/buttonProfile" />
 
     <view
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         class="com.google.android.gms.common.SignInButton"
         android:id="@+id/sign_in_button"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="145dp" />
 
     <Button
         android:layout_width="wrap_content"
@@ -26,6 +27,9 @@
         android:text="Suivant >>"
         android:id="@+id/buttonProfile"
         android:onClick="nextAction"
-        android:layout_centerHorizontal="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/sign_in_button"
+        android:layout_alignStart="@+id/sign_in_button"
+        android:layout_marginBottom="54dp" />
 
 </RelativeLayout>
