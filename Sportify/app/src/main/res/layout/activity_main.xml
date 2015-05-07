@@ -13,25 +13,36 @@
 
     </FrameLayout>
 
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/join_button_text"
         android:id="@+id/buttonJoin"
-        android:layout_gravity="right|center_vertical"
-        android:layout_marginBottom="40px"
-        android:layout_marginRight="80px"
-        android:layout_toStartOf="@+id/container"
-        android:layout_above="@+id/container" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_button_text"
         android:id="@+id/buttonCreate"
-        android:layout_gravity="right|center_vertical"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/buttonJoin"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="45dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button4"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@+id/buttonJoin"
+        android:layout_toStartOf="@+id/buttonJoin"
+        android:layout_marginRight="80dp"
+        android:layout_marginEnd="79dp" />
 
 </RelativeLayout>

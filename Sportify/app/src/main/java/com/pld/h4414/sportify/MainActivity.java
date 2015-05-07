@@ -13,6 +13,10 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +31,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.loopj.android.http.RequestParams;
 import com.pld.h4414.sportify.model.InstallationSportive;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -34,6 +43,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.pld.h4414.sportify.model.InstallationSportive;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
@@ -64,11 +74,13 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.activity_main);
+
 
 
 
@@ -184,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             mProgressDialog = ProgressDialog.show(this, null,
                     "recherche de terrains..", true);
             invokeWS(paramSport,query);
+
         }
     }
 
@@ -199,9 +212,12 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+
                 ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
                 // If the response is JSONObject instead of expected JSONArray
                 mProgressDialog.dismiss();
+                ArrayList<String> mListResult = new ArrayList<String>();
 
                 try {
                     if (response.getBoolean("success")) {
@@ -239,6 +255,15 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
 
+        menu.findItem(R.id.filter).setOnMenuItemClickListener( new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                Intent intent = new Intent(getApplicationContext(), ModalFilterActivity.class);
+
+                startActivityForResult(intent, CODE_SPORT);
+                return false;
+            }
+        });
         // Get the SearchView and set the searchable configuration
         searchItem =  menu.findItem(R.id.action_search);
         mSearchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
@@ -253,9 +278,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                         .replace(R.id.container, fragment)
                         .commit();*/
 
-                Intent intent = new Intent(getApplicationContext(), ModalFilterActivity.class);
 
-                startActivityForResult(intent, CODE_SPORT);
 
 
 
@@ -273,6 +296,26 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             public boolean onQueryTextChange(String newText) {
                 // ...
                 return true;
+            }
+        });
+
+//        mSearchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    Toast.makeText(getApplicationContext(),"hello results"  , Toast.LENGTH_LONG).show();
+//                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+//                }
+//            }
+//        });
+        mSearchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (hasFocus) {
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+                }
             }
         });
         mSearchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
@@ -370,6 +413,8 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(LYON, 0));
 
+
+
         ArrayList<InstallationSportive> list_installations = new ArrayList<>();
         for (InstallationSportive ins : list_installations){
             mMap.addMarker(new MarkerOptions()
@@ -388,25 +433,11 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
         Bundle appData = new Bundle();
         appData.putInt("sport", sport_global);
         startSearch(null, false, appData, false);
-        mProgressDialog.show();
+//        mProgressDialog.show();
         return true;
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.v("hello results","hello results");
-//        if( resultCode==1 ) {
-//            Toast.makeText(getApplicationContext(),"hello results" + data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS) , Toast.LENGTH_LONG).show();
-//            String[] mSearchResults = data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS);
-//            // Set the adapter for the list view
-//            ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
-//            mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
-//                    R.layout.results_list_item, mSearchResults));
-//
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+
     /**
      * A fragment representing the front of the card.
      */
@@ -421,6 +452,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        mSearchView.setFocusable(true);
         // Check which request we're responding to
         if (requestCode == CODE_SPORT) {
             // Make sure the request was successful
@@ -428,7 +460,8 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
                  sport_global = getIntent().getIntExtra("sport",1);
 
-
+              mSearchView.setIconifiedByDefault(false);
+                mSearchView.requestFocus();
 
             }
         }
