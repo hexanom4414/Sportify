@@ -1,5 +1,6 @@
 package com.pld.h4414.sportify;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -9,6 +10,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,14 +41,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class MainActivity extends Activity implements SearchOptionsFragment.OnFragmentInteractionListener, OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity implements SearchOptionsFragment.OnFragmentInteractionListener, OnMapReadyCallback {
 
     private boolean mShowingBack;
     private MapFragment mMapFragment;
     private CardResultsListFragment mCardListFragment;
     private GoogleMap map;
     private String mTypeSearch;
-    private SearchView mSearchView;
+    private android.support.v7.widget.SearchView mSearchView;
     private MenuItem searchItem;
     private ProgressDialog mProgressDialog;
 
@@ -53,7 +56,7 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.activity_main);
 
         if (savedInstanceState == null) {   // first opening of the app create the two fragment -> convert:
@@ -86,8 +89,8 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                 String typeSearch = appData.getString("type_search");
                 query = typeSearch + query;
             }
-            mProgressDialog = ProgressDialog.show(this, "dialog title",
-                    "dialog message", true);
+            mProgressDialog = ProgressDialog.show(this, null,
+                    "recherche de terrains..", true);
             invokeWS();
         }
     }
@@ -118,7 +121,6 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                     else {
                         //gestion erreur
                     }
-//                    Toast.makeText(getApplicationContext(), "" + mResult, Toast.LENGTH_LONG).show();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -142,9 +144,8 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
 
         // Get the SearchView and set the searchable configuration
         searchItem =  menu.findItem(R.id.action_search);
+        mSearchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
 //        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
         mSearchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
         mSearchView.setOnSearchClickListener(new View.OnClickListener() {    //open (replace) the fragment for choosing the type of search. Here : Terrain, Evenement
             @Override
@@ -156,10 +157,9 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                         .commit();
             }
         });
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-//                MenuItem searchMenuItem = getSearchMenuItem();
                 if (searchItem != null) {
                     searchItem.collapseActionView();
                 }
@@ -171,7 +171,7 @@ public class MainActivity extends Activity implements SearchOptionsFragment.OnFr
                 return true;
             }
         });
-        mSearchView.setOnCloseListener(new SearchView.OnCloseListener() {
+        mSearchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
                 fragmentManager.beginTransaction()
