@@ -19,20 +19,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Profil"
-        android:id="@+id/button"
+        android:id="@+id/buttonProfile"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="45dp"
         android:layout_marginRight="100dp"
-        />
+        android:onClick="launchProfilePage" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/create_button_text"
         android:id="@+id/buttonCreate"
-        android:layout_above="@+id/button"
+        android:layout_above="@+id/buttonProfile"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_marginBottom="45dp" />
@@ -43,8 +43,8 @@
         android:text="@string/join_button_text"
         android:id="@+id/buttonJoin"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/button"
-        android:layout_toStartOf="@+id/button"
+        android:layout_toLeftOf="@+id/buttonProfile"
+        android:layout_toStartOf="@+id/buttonProfile"
         android:layout_marginRight="80dp"
         android:layout_marginEnd="79dp" />
 

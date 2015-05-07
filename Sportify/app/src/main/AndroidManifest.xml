@@ -75,7 +75,7 @@
                 android:value=".ViewPagerActivity" />
         </activity>
         <activity
-            android:name=".ModalSportDetailActivity"
+            android:name=".ModalProfileActivity"
             android:label="@string/title_activity_modal_sport_detail" >
         </activity>
         <activity

@@ -2,8 +2,11 @@ package com.pld.h4414.sportify;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
+import android.os.AsyncTask;
 import android.support.v4.view.MenuItemCompat;
 import android.os.Bundle;
 import android.app.FragmentManager;
@@ -13,10 +16,6 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -32,8 +32,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.loopj.android.http.RequestParams;
 import com.pld.h4414.sportify.model.InstallationSportive;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -43,13 +42,13 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.pld.h4414.sportify.model.InstallationSportive;
 
 import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 
@@ -87,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
         Button buttonCreate = (Button)findViewById(R.id.buttonCreate);
         Button buttonJoin = (Button)findViewById(R.id.buttonJoin);
+        Button buttonProfile = (Button)findViewById(R.id.buttonProfile);
 
 
 
@@ -119,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
         buttonCreate.setVisibility(View.GONE);
         buttonJoin.setVisibility(View.GONE);
+        buttonProfile.setVisibility(View.GONE);
         if (savedInstanceState == null) {   // first opening of the app create the two fragment -> convert:
             mShowingBack = false;
             mCardListFragment = new CardResultsListFragment();
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
                 Button button1 = (Button)findViewById(R.id.buttonCreate);
                 Button button2 = (Button)findViewById(R.id.buttonJoin);
+                Button button3 = (Button)findViewById(R.id.buttonProfile);
 
                 if (button1.getVisibility() == View.GONE){
 
@@ -166,6 +168,12 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
                 }else if(button2.getVisibility() == View.VISIBLE ){
                     button2.setVisibility(View.GONE);
+                }
+                if(button3.getVisibility()==View.GONE){
+                    button3.setVisibility(View.VISIBLE);
+
+                }else if(button3.getVisibility() == View.VISIBLE ){
+                    button3.setVisibility(View.GONE);
                 }
 
 
@@ -389,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                         // Replace the default fragment animations with animator resources representing
                         // rotations when switching to the back of the card, as well as animator
                         // resources representing rotations when flipping back to the front (e.g. when
-                        // the system Back button is pressed).
+                        // the system Back buttonProfile is pressed).
                 .setCustomAnimations(
                         R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                         R.animator.card_flip_left_in, R.animator.card_flip_left_out)
@@ -466,6 +474,35 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             }
         }
     }
+
+    public void launchProfilePage(View v){
+        Intent intent = getIntent();
+
+
+        String first_name ="";
+        String family_name="";
+        String imgUrl="";
+
+        if(intent.getBooleanExtra("validPerson", false))
+        {
+             first_name = intent.getStringExtra("givenName");
+            family_name  = intent.getStringExtra("familyName");
+            imgUrl  = intent.getStringExtra("urlImage");
+        }
+        else
+        {
+            Toast.makeText(this,"pas d'utilisateur",Toast.LENGTH_LONG).show();
+        }
+        Intent newIntent = new Intent( this,ModalProfileActivity.class);
+        newIntent.putExtra("givenName",first_name);
+        newIntent.putExtra("familyName",family_name);
+        newIntent.putExtra("urlImage",imgUrl);
+
+        startActivity(newIntent);
+
+
+    }
+
 
 }
 

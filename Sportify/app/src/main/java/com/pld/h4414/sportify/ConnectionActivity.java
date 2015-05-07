@@ -36,7 +36,7 @@ public class ConnectionActivity extends Activity implements
     private GoogleApiClient mGoogleApiClient;
 
     /**
-     * True if the sign-in button was clicked.  When true, we know to resolve all
+     * True if the sign-in buttonProfile was clicked.  When true, we know to resolve all
      * issues preventing sign-in without waiting.
      */
     private boolean mSignInClicked;
@@ -158,7 +158,7 @@ public class ConnectionActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
+        // automatically handle clicks on the Home/Up buttonProfile, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
@@ -182,7 +182,7 @@ public class ConnectionActivity extends Activity implements
             }
         }
     }
-    /** Called when the user clicks the Ignore button */
+    /** Called when the user clicks the Ignore buttonProfile */
     public void nextAction(View view) {
 
         //transition to another activity here

@@ -451,7 +451,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
 
 
-    // Listener for the validate button
+    // Listener for the validate buttonProfile
 
     public void createEvent(View v){
 

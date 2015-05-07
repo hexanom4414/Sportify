@@ -68,7 +68,7 @@ public class ViewPagerActivity extends FragmentActivity implements ActionBar.Tab
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
 
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
+        // Specify that the Home/Up buttonProfile should not be enabled, since there is no hierarchical
         // parent.
         actionBar.setHomeButtonEnabled(false);
 
@@ -265,7 +265,7 @@ public class ViewPagerActivity extends FragmentActivity implements ActionBar.Tab
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_user, container, false);
+            View rootView = inflater.inflate(R.layout.activity_user_profile, container, false);
 
             // Here retrieve the photo and the name of the user if he's connected
             Intent intent = getActivity().getIntent();
