@@ -124,17 +124,24 @@ public class ConnectionActivity extends Activity implements
 
         // create user on the server
 
-        RequestParams params = new RequestParams();
-        Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
 
-        params.put("nom", currentPerson.getName().getFamilyName());
-        params.put("prenom", currentPerson.getName().getGivenName());
-        params.put("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
-
-        this.postUserWebServiceInvocation(params,"/utilisateur");
 
         if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) == null) {
+
             System.err.println("Null person");
+
+        }else{
+
+
+            RequestParams params = new RequestParams();
+            Person currentPerson = Plus.PeopleApi.getCurrentPerson(mGoogleApiClient);
+
+            params.put("nom", currentPerson.getName().getFamilyName());
+            params.put("prenom", currentPerson.getName().getGivenName());
+            params.put("email", Plus.AccountApi.getAccountName(mGoogleApiClient));
+
+            this.postUserWebServiceInvocation(params,"/utilisateur");
+
         }
     }
 

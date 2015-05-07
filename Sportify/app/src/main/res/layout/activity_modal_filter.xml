@@ -7,7 +7,11 @@
     tools:context="com.pld.h4414.sportify.ModalFilterActivity"
     android:theme="@android:style/Theme.Dialog"    >
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerFilter"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="168dp" />
 </RelativeLayout>

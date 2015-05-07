@@ -16,14 +16,8 @@
 
 package com.pld.h4414.sportify;
 
-import android.animation.AnimatorInflater;
-import android.animation.AnimatorSet;
-import android.animation.LayoutTransition;
-import android.animation.ObjectAnimator;
 import android.app.ActionBar;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -32,16 +26,23 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.SupportMapFragment;
@@ -49,7 +50,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import java.io.InputStream;
 
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener, ViewPager.OnPageChangeListener {
+public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
@@ -109,8 +110,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
         }
 
 
-        /*
-        That will be used for v2 or next
+
 
 
         FloatingActionButton fabButton = new FloatingActionButton.Builder(this)
@@ -119,7 +119,31 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 .withGravity(Gravity.BOTTOM | Gravity.RIGHT)
                 .withMargins(0, 0, 16, 16)
                 .create();
-        */
+
+
+
+        fabButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                Button button1 = (Button)findViewById(R.id.button);
+
+                if (button1.getVisibility() == View.GONE){
+
+                    button1.setVisibility(View.VISIBLE);
+
+                }else if(button1.getVisibility() == View.VISIBLE){
+                    button1.setVisibility(View.GONE);
+                }
+
+
+
+            }
+        });
+
+
 
     }
 
@@ -137,20 +161,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-
-    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
@@ -240,28 +250,28 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_gmaps, container, false);
 
-            //the following part can be useful to navigate between the two modes (list and maps)
-/*
 
-            // Demonstration of navigating to external activities.
-            rootView.findViewById(R.id.demo_external_activity)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            // Create an intent that asks the user to pick a photo, but using
-                            // FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET, ensures that relaunching
-                            // the application from the device home screen does not return
-                            // to the external activity.
-                            Intent externalActivityIntent = new Intent(Intent.ACTION_PICK);
-                            externalActivityIntent.setType("image/*");
-                            externalActivityIntent.addFlags(
-                                    Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
-                            startActivity(externalActivityIntent);
-                        }
-                    });*/
-
+            System.out.println("on arrive ICI");
 
             return rootView;
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setHasOptionsMenu(true);
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            // TODO Add your menu entries here
+            super.onCreateOptionsMenu(menu, inflater);
+
+            inflater.inflate(R.menu.menu_fragment_maps, menu);
+
+            // Get the SearchView and set the searchable configuration
+            MenuItem searchItem = menu.findItem(R.id.action_search);
+            SearchView mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         }
     }
 
@@ -359,7 +369,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                             String email = oldIntent.getStringExtra("email");
                             Intent intent = new Intent(getActivity(),ModalCreateActivity.class);
 
-                            intent.putExtra("email",email);
+                            intent.putExtra("email", email);
 
                             startActivity(intent);
                         }

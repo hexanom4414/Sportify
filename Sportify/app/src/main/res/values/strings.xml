@@ -38,4 +38,6 @@
     <string name="saved_first_name">first_name</string>
     <string name="saved_family_name">family_name</string>
     <string name="saved_email">email</string>
+    <string name="action_search">Rechercher</string>
+    <string name="action_switch_carte">Carte</string>
 </resources>

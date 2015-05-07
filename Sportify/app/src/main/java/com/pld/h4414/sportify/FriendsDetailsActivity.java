@@ -16,4 +16,6 @@ public class FriendsDetailsActivity extends Activity {
     }
 
 
+
+
 }
