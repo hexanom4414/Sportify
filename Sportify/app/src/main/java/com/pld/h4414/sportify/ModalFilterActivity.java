@@ -19,13 +19,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ModalFilterActivity extends Activity implements AdapterView.OnItemSelectedListener {
 
 
-    private String sport;
+    private int sport;
     private static boolean isReallySelectedSport = false;
+    private static Map<String,Integer> mapSport = new HashMap<String,Integer>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +53,7 @@ public class ModalFilterActivity extends Activity implements AdapterView.OnItemS
 
 
 
-           sport =  (String)parent.getItemAtPosition(position);
-
+           sport = mapSport.get((String)parent.getItemAtPosition(position));
             Intent intent = new Intent( getApplicationContext(), MainActivity.class);
             intent.putExtra("sport",sport);
             startActivity(intent);
@@ -101,6 +104,8 @@ public class ModalFilterActivity extends Activity implements AdapterView.OnItemS
                         for (int i = 0; i < array.length(); i++) {
 
                             sport_list.add(array.getJSONObject(i).getString("nom"));
+                            mapSport.put( array.getJSONObject(i).getString("nom"), Integer.parseInt(array.getJSONObject(i).getString("id")));
+
 
 
                         }

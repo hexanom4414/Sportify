@@ -1,5 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/container2"
+    android:layout_width="match_parent" android:layout_height="match_parent" >
 
-<android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pager"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+
+    <FrameLayout  android:id="@+id/container"
+        android:layout_width="match_parent" android:layout_height="match_parent"
+        tools:context="com.sportify.pld.fr.search.MainActivity"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true">
+
+
+    </FrameLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/join_button_text"
+        android:id="@+id/buttonJoin"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginBottom="40px"
+        android:layout_marginRight="80px"
+        android:layout_toStartOf="@+id/container"
+        android:layout_above="@+id/container" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create_button_text"
+        android:id="@+id/buttonCreate"
+        android:layout_gravity="right|center_vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

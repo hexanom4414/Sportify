@@ -1,36 +1,16 @@
-/*
- * Copyright 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.pld.h4414.sportify;
 
-import android.app.ActionBar;
+import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
+import android.app.FragmentManager;
+import android.app.ProgressDialog;
+import android.app.SearchManager;
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -40,73 +20,102 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.loopj.android.http.RequestParams;
+import com.pld.h4414.sportify.model.InstallationSportive;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
-import com.google.android.gms.maps.SupportMapFragment;
 
-import java.io.InputStream;
+public class MainActivity extends AppCompatActivity implements SearchOptionsFragment.OnFragmentInteractionListener, OnMapReadyCallback {
 
 
-public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
+    public final static LatLngBounds LYON = new LatLngBounds(
+            new LatLng(45.706343, 4.808287), new LatLng(45.793546, 4.908366));
+    private boolean mShowingBack;
+    private MapFragment mMapFragment;
+    private CardResultsListFragment mCardListFragment;
+    private GoogleMap mMap;
+    private String mTypeSearch;
+    private android.support.v7.widget.SearchView mSearchView;
+    private MenuItem searchItem;
+    private ProgressDialog mProgressDialog;
+    ArrayList<String> mListResult = new ArrayList<String>();
+    static final int CODE_SPORT = 1;  // The request code
+    public int sport_global = 0;
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * three primary sections of the app. We use a {@link android.support.v4.app.FragmentPagerAdapter}
-     * derivative, which will keep every loaded fragment in memory. If this becomes too memory
-     * intensive, it may be best to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    AppSectionsPagerAdapter mAppSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will display the three primary sections of the app, one at a
-     * time.
-     */
-    ViewPager mViewPager;
 
-    public void onCreate(Bundle savedInstanceState) {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
         setContentView(R.layout.activity_main);
 
-        // Create the adapter that will return a fragment for each of the three primary sections
-        // of the app.
-        mAppSectionsPagerAdapter = new AppSectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the action bar.
-        final ActionBar actionBar = getActionBar();
 
-        // Specify that the Home/Up button should not be enabled, since there is no hierarchical
-        // parent.
-        actionBar.setHomeButtonEnabled(false);
 
-        // Specify that we will be displaying tabs in the action bar.
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        Button buttonCreate = (Button)findViewById(R.id.buttonCreate);
+        Button buttonJoin = (Button)findViewById(R.id.buttonJoin);
 
-        // Set up the ViewPager, attaching the adapter and setting up a listener for when the
-        // user swipes between sections.
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        mViewPager.setAdapter(mAppSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+
+
+ 
+
+
+        buttonCreate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onPageSelected(int position) {
-                // When swiping between different app sections, select the corresponding tab.
-                // We can also use ActionBar.Tab#select() to do this if we have a reference to the
-                // Tab.
-                actionBar.setSelectedNavigationItem(position);
+            public void onClick(View view) {
+
+                           /* AnimatorSet buttonSet = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.fab_animation);
+                            buttonSet.setTarget(view);
+                            buttonSet.start();*/
+
+
+                //transition to another activity here
+                Intent oldIntent = getIntent();
+
+                String email = oldIntent.getStringExtra("email");
+                Intent intent = new Intent(getApplicationContext(), ModalCreateActivity.class);
+
+
+                intent.putExtra("email", email);
+                startActivity(intent);
+
             }
         });
 
-        // For each of the sections in the app, add a tab to the action bar.
-        for (int i = 0; i < mAppSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by the adapter.
-            // Also specify this Activity object, which implements the TabListener interface, as the
-            // listener for when this tab is selected.
-            actionBar.addTab(
-                    actionBar.newTab()
-                            .setIcon(mAppSectionsPagerAdapter.getPageIcon(i))
-                            .setTabListener(this));
+
+
+        buttonCreate.setVisibility(View.GONE);
+        buttonJoin.setVisibility(View.GONE);
+        if (savedInstanceState == null) {   // first opening of the app create the two fragment -> convert:
+            mShowingBack = false;
+            mCardListFragment = new CardResultsListFragment();
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, mCardListFragment)
+                    .commit();
+            mMapFragment = MapFragment.newInstance();
+            mMapFragment.getMapAsync(this);
         }
 
 
@@ -128,14 +137,23 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
 
-                Button button1 = (Button)findViewById(R.id.button);
+                Button button1 = (Button)findViewById(R.id.buttonCreate);
+                Button button2 = (Button)findViewById(R.id.buttonJoin);
 
                 if (button1.getVisibility() == View.GONE){
 
                     button1.setVisibility(View.VISIBLE);
 
-                }else if(button1.getVisibility() == View.VISIBLE){
+                }else if (button2.getVisibility() == View.VISIBLE){
+
                     button1.setVisibility(View.GONE);
+
+                }
+                if(button2.getVisibility()==View.GONE){
+                    button2.setVisibility(View.VISIBLE);
+
+                }else if(button2.getVisibility() == View.VISIBLE ){
+                    button2.setVisibility(View.GONE);
                 }
 
 
@@ -145,277 +163,276 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
 
 
+
     }
 
     @Override
-    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    protected void onNewIntent(Intent intent) {
+        handleIntent(intent);
     }
 
-    @Override
-    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-        // When the given tab is selected, switch to the corresponding page in the ViewPager.
-        mViewPager.setCurrentItem(tab.getPosition());
-    }
+    private void handleIntent(Intent intent) {
 
-    @Override
-    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
-    }
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
-     * sections of the app.
-     */
-    public static class AppSectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public AppSectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int i) {
-            switch (i) {
-
-
-
-                case 0:
-
-//                    return new GmapsFragment();
-                    GmapsFragment mapFragment = new GmapsFragment();
-                    return mapFragment.newInstance();
-
-                case 1:
-
-                    return new SportifyActionFragment();
-
-                case 2:
-                    return new FriendsFragment();
-
-                case 3:
-
-                    return new UserFragment();
-
-                default:
-
-                    return new UserFragment();
-
-
+            String query = intent.getStringExtra(SearchManager.QUERY);
+            String paramSport ="";
+            Bundle appData = getIntent().getBundleExtra(SearchManager.APP_DATA);
+            if (appData != null) {
+                paramSport = appData.getString("sport");
             }
-        }
-
-        @Override
-        public int getCount() {
-            return 4;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return "Section " + (position + 1);
-        }
-
-        public int getPageIcon (int position) {
-            switch (position) {
-
-                case 0:
-                    return R.drawable.ic_sportify;
-                case 1:
-                    return R.drawable.ic_add;
-
-                case 2:
-
-                    return R.drawable.ic_friends;
-
-                case 3:
-
-                    return R.drawable.ic_user;
-
-                default:
-
-                    return R.drawable.ic_sportify;
-
-            }
-
-        }
-
-    }
-
-
-    /**
-     * You can create here a gmaps fragment following the dummy fragment model
-     */
-    public static class GmapsFragment extends SupportMapFragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_gmaps, container, false);
-
-
-            System.out.println("on arrive ICI");
-
-            return rootView;
-        }
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setHasOptionsMenu(true);
-        }
-
-        @Override
-        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-            // TODO Add your menu entries here
-            super.onCreateOptionsMenu(menu, inflater);
-
-            inflater.inflate(R.menu.menu_fragment_maps, menu);
-
-            // Get the SearchView and set the searchable configuration
-            MenuItem searchItem = menu.findItem(R.id.action_search);
-            SearchView mSearchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+            mProgressDialog = ProgressDialog.show(this, null,
+                    "recherche de terrains..", true);
+            invokeWS(paramSport,query);
         }
     }
 
-    /**
-     * A dummy fragment representing a section of the app, but that simply displays dummy text.
-     */
-    public static class UserFragment extends Fragment {
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_user, container, false);
-
-            // Here retrieve the photo and the name of the user if he's connected
-            Intent intent = getActivity().getIntent();
-
-            if(intent.getBooleanExtra("validPerson", false))
-            {
-                String first_name = intent.getStringExtra("givenName");
-                String family_name = intent.getStringExtra("familyName");
-                String imgUrl = intent.getStringExtra("urlImage");
-
-                // show his sports in the gridview
-                new DownloadImageTask((ImageView) rootView.findViewById(R.id.imageView)).execute(imgUrl);
-                TextView text_name = (TextView) rootView.findViewById(R.id.name);
-                text_name.setText(first_name + " " + family_name);
-            }
-            else
-            {
-                ((TextView) rootView.findViewById(R.id.name)).setText("no user");
-            }
-
-            return rootView;
-        }
-
-        private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-            ImageView bmImage;
-
-            public DownloadImageTask(ImageView bmImage) {
-                this.bmImage = bmImage;
-            }
-
-            protected Bitmap doInBackground(String... urls) {
-                String urldisplay = urls[0];
-                Bitmap mIcon11 = null;
-                try {
-                    InputStream in = new java.net.URL(urldisplay).openStream();
-                    mIcon11 = BitmapFactory.decodeStream(in);
-                } catch (Exception e) {
-                    Log.e("Error", e.getMessage());
-                    e.printStackTrace();
-                }
-                return mIcon11;
-            }
-
-            protected void onPostExecute(Bitmap result) {
-                bmImage.setImageBitmap(result);
-            }
-        }
-    }
-    /**
-     * A  fragment showing the principal action buttons of the app
-     */
-    public static class SportifyActionFragment extends Fragment {
+    public void invokeWS(String paramSport, String query){
+        SportifyRestClient client = new SportifyRestClient();
 
 
-        @Override
-        public View onCreateView(final LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(R.layout.fragment_sportify_action, container, false);
-            View createButton = rootView.findViewById(R.id.createEventButton);
 
-           /* //create animation for adding the buttons
-            LayoutTransition showButtons = new LayoutTransition();
-            ObjectAnimator anim = ObjectAnimator.ofFloat(createButton, "rotation", 0, 90);
-            anim.setDuration(6000);
-            showButtons.setAnimator(LayoutTransition.CHANGE_APPEARING, anim);
-            container.setLayoutTransition(showButtons);*/
+                String suffixe = "/fetch/installation_sportive?filter=sport";
 
-
-            //click listener of the buttons
-
-                    createButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                           /* AnimatorSet buttonSet = (AnimatorSet) AnimatorInflater.loadAnimator(getActivity(), R.animator.fab_animation);
-                            buttonSet.setTarget(view);
-                            buttonSet.start();*/
-
-
-                            //transition to another activity here
-                            Intent oldIntent = getActivity().getIntent();
-
-                            String email = oldIntent.getStringExtra("email");
-                            Intent intent = new Intent(getActivity(),ModalCreateActivity.class);
-
-                            intent.putExtra("email", email);
-
-                            startActivity(intent);
-                        }
-                    });
-
-            rootView.findViewById(R.id.joinEventButton)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            //transition to another activity here
-                            Intent intent = new Intent(getActivity(), ModalFilterActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-
-            return rootView;
-        }
-    }
-
-        /**
-         * A  fragment showing the friends section
-         */
-        public static class FriendsFragment extends Fragment {
-
+        suffixe = suffixe + "&arg=" + sport_global ;
+        client.get(suffixe, new RequestParams(), new JsonHttpResponseHandler() {
 
             @Override
-            public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                     Bundle savedInstanceState) {
-                View rootView = inflater.inflate(R.layout.fragment_friends, container, false);
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
+                // If the response is JSONObject instead of expected JSONArray
+                mProgressDialog.dismiss();
 
-                //click listener of the buttons
-            /*rootView.findViewById(R.id.demo_external_activity)
-                    .setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
+                try {
+                    if (response.getBoolean("success")) {
+                        JSONArray data = response.getJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject row = data.getJSONObject(i);
+                            InstallationSportive aInstallationSportive = new InstallationSportive(row.getInt("id"),row.getString("nom"),row.getString("adresse"),row.getDouble("latitude"),row.getDouble("longitude"));
 
+                            mResult.add(aInstallationSportive);
+                            mListResult.add(row.getString("nom"));
                         }
-                    });*/
-                return rootView;
+                    }
+                    else {
+                        //gestion erreur
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                searchItem.collapseActionView();
+
+                ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
+                System.out.println(mListResult.size());
+                mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
+                        R.layout.results_list_item, mListResult));
             }
+        });
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final FragmentManager fragmentManager = getFragmentManager();
+        // Inflate the options menu from XML
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+
+        // Get the SearchView and set the searchable configuration
+        searchItem =  menu.findItem(R.id.action_search);
+        mSearchView = (android.support.v7.widget.SearchView) MenuItemCompat.getActionView(searchItem);
+//        mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView.setIconifiedByDefault(true); // Do not iconify the widget; expand it by default
+        mSearchView.setOnSearchClickListener(new View.OnClickListener() {    //open (replace) the fragment for choosing the type of search. Here : Terrain, Evenement
+            @Override
+            public void onClick(View v) {
+               /* Fragment fragment = new SearchOptionsFragment();
+                // Insert the fragment by replacing any existing fragment
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, fragment)
+                        .commit();*/
+
+                Intent intent = new Intent(getApplicationContext(), ModalFilterActivity.class);
+
+                startActivityForResult(intent, CODE_SPORT);
 
 
+
+            }
+        });
+        mSearchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (searchItem != null) {
+                    searchItem.collapseActionView();
+                }
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // ...
+                return true;
+            }
+        });
+        mSearchView.setOnCloseListener(new android.support.v7.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, mCardListFragment)
+                        .commit();
+                return false;
+            }
+        });
+//
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+
+        return true;
     }
 
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
+            return true;
+        }
+        if (id == R.id.action_toggle_card) {    // for switching between the two fragment : CardResultListView and CardGmaps
+            if (mShowingBack) {
+                item.setTitle(R.string.action_switch_carte);
+                flipCard();
+                mShowingBack = false;
+
+            } else {
+                item.setTitle(R.string.action_switch_list);
+                flipCard();
+                mShowingBack = true;
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(String typeSearch) {
+        mTypeSearch = typeSearch;
+        mSearchView.setQueryHint(mTypeSearch+" : ");
+        FragmentManager aFragmentManager = getFragmentManager();
+        aFragmentManager.beginTransaction()
+                .replace(R.id.container, mCardListFragment)
+                .commit();
+
+
+    }
+
+    private void flipCard() {
+        // Flip to the front.
+        if (mShowingBack) {
+            getFragmentManager().popBackStack();
+            return;
+        }
+
+        // Flip to the back.
+        mShowingBack = true;
+
+        // Create and commit a new fragment transaction that adds the fragment for the back of
+        // the card, uses custom animations, and is part of the fragment manager's back stack.
+        getFragmentManager()
+                .beginTransaction()
+                        // Replace the default fragment animations with animator resources representing
+                        // rotations when switching to the back of the card, as well as animator
+                        // resources representing rotations when flipping back to the front (e.g. when
+                        // the system Back button is pressed).
+                .setCustomAnimations(
+                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+                        // Replace any fragments currently in the container view with a fragment
+                        // representing the next page (indicated by the just-incremented currentPage
+                        // variable).
+                .replace(R.id.container, mMapFragment)
+                        // Add this transaction to the back stack, allowing users to press Back
+                        // to get to the front of the card.
+                .addToBackStack(null)
+                        // Commit the transaction.
+                .commit();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap map) {
+        System.out.println("onMapReady !!");
+        mMap = map;
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(LYON.getCenter()));
+        mMap.moveCamera(CameraUpdateFactory.zoomTo(12));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(LYON, 0));
+
+        ArrayList<InstallationSportive> list_installations = new ArrayList<>();
+        for (InstallationSportive ins : list_installations){
+            mMap.addMarker(new MarkerOptions()
+                    .position(new LatLng(ins.get_latitude(), ins.get_longitude()))
+                    .title(ins.get_nom())
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                    .snippet(""));
+
+        }
+        mMap.setMyLocationEnabled(true);
+    }
+
+    @Override
+    public boolean onSearchRequested() {
+        // We're adding the first option type_search selected and send it also to the searchableActivity
+        Bundle appData = new Bundle();
+        appData.putInt("sport", sport_global);
+        startSearch(null, false, appData, false);
+        mProgressDialog.show();
+        return true;
+    }
+
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        Log.v("hello results","hello results");
+//        if( resultCode==1 ) {
+//            Toast.makeText(getApplicationContext(),"hello results" + data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS) , Toast.LENGTH_LONG).show();
+//            String[] mSearchResults = data.getStringArrayExtra(SearchableActivity.EXTRA_SEARCH_RESULTS);
+//            // Set the adapter for the list view
+//            ListView mResultsList =  (ListView) findViewById(R.id.results_listview);
+//            mResultsList.setAdapter( new ArrayAdapter<String>(getApplicationContext(),
+//                    R.layout.results_list_item, mSearchResults));
+//
+//        }
+//
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
+    /**
+     * A fragment representing the front of the card.
+     */
+    public static class CardResultsListFragment extends Fragment {
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+
+            return inflater.inflate(R.layout.fragment_card_results_list, container, false);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // Check which request we're responding to
+        if (requestCode == CODE_SPORT) {
+            // Make sure the request was successful
+            if (resultCode == RESULT_OK) {
+
+                 sport_global = getIntent().getIntExtra("sport",1);
+
+
+
+            }
+        }
+    }
 
 }
+
