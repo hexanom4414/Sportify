@@ -2,11 +2,9 @@ package com.pld.h4414.sportify;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.graphics.Color;
 
-import android.os.AsyncTask;
 import android.support.v4.view.MenuItemCompat;
 import android.os.Bundle;
 import android.app.FragmentManager;
@@ -14,7 +12,6 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -32,7 +28,6 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.loopj.android.http.RequestParams;
 import com.pld.h4414.sportify.model.InstallationSportive;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,9 +43,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
-
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity implements SearchOptionsFragment.OnFragmentInteractionListener, OnMapReadyCallback {
@@ -68,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
     private ProgressDialog mProgressDialog;
     ArrayList<String> mListResult = new ArrayList<String>();
     ArrayList<InstallationSportive> mResult = new ArrayList<InstallationSportive>();
+
 
     static final int CODE_SPORT = 1;  // The request code
     public int sport_global = 0;
@@ -205,19 +201,20 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
             }
             mProgressDialog = ProgressDialog.show(this, null,
                     "recherche de terrains..", true);
-            invokeWS(paramSport,query);
+            invokeWSFieldBySport(paramSport, query);
 
         }
     }
 
-    public void invokeWS(String paramSport, String query){
+
+    public void invokeWSFieldBySport(String paramSport, String query){
         SportifyRestClient client = new SportifyRestClient();
 
 
 
-                String suffixe = "/fetch/installation_sportive?filter=sport";
+                String suffixe = "/fetch/installation_sportive/jonction_installation_sport/sportId/";
 
-        suffixe = suffixe + "&arg=" + sport_global ;
+        suffixe += sport_global ;
         client.get(suffixe, new RequestParams(), new JsonHttpResponseHandler() {
 
             @Override
@@ -232,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
                     if (response.getBoolean("success")) {
                         JSONArray data = response.getJSONArray("data");
                         for (int i = 0; i < data.length(); i++) {
+
                             JSONObject row = data.getJSONObject(i);
                             InstallationSportive aInstallationSportive = new InstallationSportive(row.getInt("id"),row.getString("nom"),row.getString("adresse"),row.getDouble("latitude"),row.getDouble("longitude"));
 
@@ -505,6 +503,7 @@ public class MainActivity extends AppCompatActivity implements SearchOptionsFrag
 
 
     }
+
 
 
 }

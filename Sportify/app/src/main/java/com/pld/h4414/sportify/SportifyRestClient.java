@@ -29,7 +29,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SportifyRestClient {
     public static JSONArray result  = new JSONArray();
-    private static final String BASE_URL = "http://91.229.95.108:80";
+    private static final String BASE_URL = "http://91.229.95.108:8080";
+//    private static final String BASE_URL = "http://91.229.95.108:80";
     //static public final Lock _mutex = new ReentrantLock(true);
     CountDownLatch latch = new CountDownLatch(1);
 

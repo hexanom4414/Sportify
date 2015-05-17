@@ -78,7 +78,7 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         SportifyRestClient client = new SportifyRestClient();
         JsonHttpResponseHandlerGetSports handler = new JsonHttpResponseHandlerGetSports();
-        client.getWebServiceInvocation( params,suffixe, handler);
+        client.getWebServiceInvocation(params,suffixe, handler);
 
 
 
@@ -463,10 +463,10 @@ public class ModalCreateActivity extends FragmentActivity implements AdapterView
 
         String email = intent.getStringExtra("email");
 
-        params.put("date_evenement", event.get_date());
-        params.put("installation_sportive", event.get_installation());
-        params.put("sport", event.get_sport());
-        params.put("email_createur", event.get_email_user());
+        params.put("date", event.get_date());
+        params.put("installationId", event.get_installation());
+        params.put("sportId", event.get_sport());
+        params.put("email", event.get_email_user());
 
         this.postEventWebServiceInvocation(params, "/evenement");
       //  Toast.makeText(getApplicationContext(), event+"",Toast.LENGTH_LONG).show();
